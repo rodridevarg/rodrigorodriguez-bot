@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secretaria Virtual - Rodrigo Rodriguez</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22c55e;
+      --primary-light: rgba(34, 197, 94, 0.1);
+      --primary-medium: rgba(34, 197, 94, 0.3);
+      --primary-hover: rgba(34, 197, 94, 0.6);
+      --accent: #3b82f6;
+      --black: #111827;
+      --white: #ffffff;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --text: #111827;
+      --text-secondary: #6b7280;
+      --border: #e5e7eb;
+      --border-strong: #d1d5db;
+      --error: #ef4444;
+      --footer-bg: #111827;
+      --heading-font: 'Inter', sans-serif;
+      --body-font: 'Roboto Mono', monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-pill: 50px;
+      --transition: all 0.3s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo {
+      height: 48px;
+      width: 48px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    header h1 {
+      font-family: var(--heading-font);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--black);
+      margin: 0;
+    }
+
+    header p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    main {
+      flex: 1;
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex: 1;
+      min-height: 300px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .message {
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius-md);
+      max-width: 85%;
+      line-height: 1.6;
+      font-size: 13px;
+      animation: fadeIn 0.3s ease;
+      font-family: var(--body-font);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      background: var(--primary);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.bot {
+      background: var(--white);
+      color: var(--text);
+      align-self: flex-start;
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.error {
+      background: rgba(239, 68, 68, 0.05);
+      color: var(--error);
+      align-self: flex-start;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .sources {
+      margin-top: 0.75rem;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .sources strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 3rem 1rem;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-family: var(--body-font);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
+      font-family: var(--body-font);
+      color: var(--text);
+      background: var(--white);
+      transition: var(--transition);
+    }
+
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    textarea:hover {
+      border-color: var(--primary-hover);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+
+    button {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 13px 25px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--body-font);
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.02em;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 12px;
+      color: var(--white);
+      background: var(--footer-bg);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    footer a:hover {
+      opacity: 0.8;
+    }
+
+    .chat-area::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 3px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-hover);
+    }
+
+    @media (max-width: 600px) {
+      main { padding: 1rem; }
+      .message { max-width: 90%; font-size: 13px; }
+      header { padding: 0.75rem 1rem; }
+      .logo { height: 40px; width: 40px; }
+    }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 0.5rem 0;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <div class="logo">RR</div>
+      <div>
+        <h1>Secretaria Virtual</h1>
+        <p>Consulta sobre automatizacion para tu negocio</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card chat-area" id="chatContainer">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">&#128172;</div>
+        <p>Hace una pregunta para comenzar.</p>
+        <p style="margin-top:0.5rem; font-size:12px;">
+          Ej: "¿Como funciona la Secretaria Virtual?" o "¿Cuanto cuesta?"
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="questionInput">Tu pregunta</label>
+      <textarea 
+        id="questionInput" 
+        rows="2" 
+        placeholder="Escribi tu pregunta aqui..." 
+        autofocus
+      ></textarea>
+      <p class="hint">Enter para enviar &middot; Shift + Enter para nueva linea</p>
+      <div style="display:flex; justify-content:flex-end; margin-top:0.75rem;">
+        <button id="sendBtn" onclick="sendQuestion()">Enviar pregunta</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="https://rodrigorodriguez.com.ar" target="_blank" rel="noopener">Rodrigo Rodriguez</a> &middot; Secretaria Virtual &middot; Hecho con 💚 en Argentina
+  </footer>
+
+  <script>
+    const chatContainer = document.getElementById('chatContainer');
+    const emptyState = document.getElementById('emptyState');
+    const questionInput = document.getElementById('questionInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    questionInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendQuestion();
+      }
+    });
+
+    function appendMessage(text, type, sources) {
+      if (emptyState) emptyState.style.display = 'none';
+      const msg = document.createElement('div');
+      msg.className = `message ${type}`;
+      msg.textContent = text;
+      if (sources && sources.length > 0) {
+        const srcDiv = document.createElement('div');
+        srcDiv.className = 'sources';
+        const label = document.createElement('strong');
+        label.textContent = 'Fuentes: ';
+        srcDiv.appendChild(label);
+        const titles = sources.map(s => s.title).join(', ');
+        srcDiv.appendChild(document.createTextNode(titles));
+        msg.appendChild(srcDiv);
+      }
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function appendTyping() {
+      if (emptyState) emptyState.style.display = 'none';
+      const msg = document.createElement('div');
+      msg.className = 'message bot';
+      msg.id = 'typingIndicator';
+      msg.innerHTML = '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function removeTyping() {
+      const typing = document.getElementById('typingIndicator');
+      if (typing) typing.remove();
+    }
+
+    async function sendQuestion() {
+      const question = questionInput.value.trim();
+      if (!question) return;
+
+      appendMessage(question, 'user');
+      questionInput.value = '';
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span class="spinner"></span> Pensando...';
+
+      setTimeout(() => appendTyping(), 300);
+
+      try {
+        const response = await fetch('/ask-public', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question }),
+        });
+
+        removeTyping();
+
+        if (response.status === 429) {
+          const retry = response.headers.get('Retry-After') || '60';
+          appendMessage(`Demasiadas peticiones. Espera ${retry} segundos.`, 'error');
+          return;
+        }
+        if (!response.ok) {
+          const text = await response.text();
+          appendMessage(`Error ${response.status}: ${text}`, 'error');
+          return;
+        }
+
+        const data = await response.json();
+        const answer = typeof data.answer === 'string' ? data.answer : 'Sin respuesta';
+        const sources = Array.isArray(data.sources) ? data.sources : [];
+        appendMessage(answer, 'bot', sources);
+      } catch (err) {
+        removeTyping();
+        appendMessage('No se pudo conectar con el backend. Verifica que este corriendo.', 'error');
+        console.error(err);
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Enviar pregunta';
+      }
+    }
+  </script>
+</body>
+</html>

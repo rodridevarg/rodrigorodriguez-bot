@@ -1,0 +1,59 @@
+# Rodrigo Rodriguez Bot - Docker Compose
+# VPS: Puerto interno 8001 (Caddy maestro de aibrain hace reverse proxy)
+# Se conecta a la red Docker 'boston-ai_default' ya existente (creada por aibrain)
+
+services:
+  web:
+    build: .
+    container_name: rodrigo-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8001:8000"
+    env_file:
+      - .env
+    environment:
+      - APP_DB_PATH=/app/data/app.sqlite3
+    volumes:
+      - app-data:/app/data
+    command: >
+      python -m uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --workers 1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - boston-ai_default
+
+  worker:
+    build: .
+    container_name: rodrigo-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - APP_DB_PATH=/app/data/app.sqlite3
+    volumes:
+      - app-data:/app/data
+    command: python scripts/run_worker.py
+    depends_on:
+      web:
+        condition: service_healthy
+    deploy:
+      replicas: 1
+    networks:
+      - boston-ai_default
+
+volumes:
+  app-data:
+    driver: local
+
+networks:
+  boston-ai_default:
+    name: boston-ai_default
+    driver: bridge
+    external: true
