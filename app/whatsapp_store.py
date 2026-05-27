@@ -333,9 +333,21 @@ class SQLiteWhatsAppStore:
             return [dict(row) for row in cur.fetchall()]
 
     def get_full_conversation(self, phone_number: str, limit: int = 100) -> List[Dict]:
+        # Meta normaliza los numeros al enviar (ej. 54911... -> 5411...).
+        # Buscamos outbound con ambas variantes para no perder mensajes.
+        def _normalize(p: str) -> str:
+            p = p.strip().replace("+", "")
+            if p.startswith("549") and len(p) == 13:
+                return "54" + p[3:]
+            return p
+
+        normalized = _normalize(phone_number)
+        variants = list(dict.fromkeys([phone_number, normalized]))
+        placeholders = ",".join("?" for _ in variants)
+
         with get_connection() as conn:
             cur = conn.execute(
-                """
+                f"""
                 SELECT
                     'inbound' AS direction,
                     im.text AS content,
@@ -350,11 +362,11 @@ class SQLiteWhatsAppStore:
                     COALESCE(om.sent_at, om.created_at) AS ts,
                     om.send_status
                 FROM outbound_messages om
-                WHERE om.to_number = ?
+                WHERE om.to_number IN ({placeholders})
                 ORDER BY ts DESC
                 LIMIT ?
                 """,
-                (phone_number, phone_number, limit),
+                (phone_number, *variants, limit),
             )
             rows = [dict(row) for row in cur.fetchall()]
             rows.reverse()
