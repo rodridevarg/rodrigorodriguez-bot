@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - Secretaria Virtual</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -273,9 +274,22 @@
 
         // Audio context for notifications
         let audioCtx = null;
+        let audioEnabled = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            audioEnabled = true;
+        }
+
         function playNotificationSound() {
+            if (!audioEnabled) return;
             try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!audioCtx) return;
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 oscillator.connect(gainNode);
@@ -313,6 +327,10 @@
         if (adminKey) {
             document.getElementById('loginOverlay').classList.add('hidden');
         }
+
+        // Enable audio on first user interaction (required by Chrome)
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('keydown', initAudio, { once: true });
 
         async function apiCall(method, path, body = null) {
             const opts = {
@@ -533,6 +551,12 @@
                     const data = JSON.parse(e.data);
                     if (data.type === 'new_message') {
                         playNotificationSound();
+                        loadConversations();
+                        if (selectedPhone === data.from_number) {
+                            loadChat(selectedPhone);
+                        }
+                    } else if (data.type === 'message_processed') {
+                        // Worker finished processing - update list to show "Bot" instead of "Pendiente"
                         loadConversations();
                         if (selectedPhone === data.from_number) {
                             loadChat(selectedPhone);

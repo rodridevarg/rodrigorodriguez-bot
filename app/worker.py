@@ -6,6 +6,7 @@ from app.db import init_db
 from app.db_migrations import apply_migrations
 from app.whatsapp_store import store
 from app.whatsapp_service import WhatsAppService
+from app.sse_manager import sse_manager
 
 POLL_INTERVAL_SECONDS = 2
 BATCH_SIZE = 10
@@ -52,6 +53,14 @@ class Worker:
                             print(f"[WORKER] Resultado: {result}")
                         else:
                             print(f"[WORKER] Respuesta enviada: {result}")
+                            # Notify admin panel that message was processed
+                            try:
+                                sse_manager.notify_message_processed(
+                                    from_number=msg["from_number"],
+                                    status="done"
+                                )
+                            except Exception:
+                                pass
 
                 else:
                     if DEBUG:
