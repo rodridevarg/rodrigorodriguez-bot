@@ -555,12 +555,14 @@
                         if (selectedPhone === data.from_number) {
                             loadChat(selectedPhone);
                         }
-                    } else if (data.type === 'message_processed') {
-                        // Worker finished processing - update list to show "Bot" instead of "Pendiente"
-                        loadConversations();
-                        if (selectedPhone === data.from_number) {
-                            loadChat(selectedPhone);
-                        }
+                        // Auto-refresh after 8s (worker processing time)
+                        // to show bot response without manual F5
+                        setTimeout(() => {
+                            loadConversations();
+                            if (selectedPhone === data.from_number) {
+                                loadChat(selectedPhone);
+                            }
+                        }, 8000);
                     } else if (data.type === 'status_change') {
                         if (selectedPhone) loadChat(selectedPhone);
                     }

@@ -53,12 +53,5 @@ class SSEManager:
             "status": status,
         })
 
-    def notify_message_processed(self, from_number: str, status: str):
-        self.broadcast({
-            "type": "message_processed",
-            "from_number": from_number,
-            "status": status,
-        })
-
 
 sse_manager = SSEManager()
