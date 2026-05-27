@@ -53,6 +53,24 @@ MIGRATIONS = {
         CREATE INDEX IF NOT EXISTS idx_status_events_provider_id
             ON message_status_events(provider_message_id);
     """,
+    "002_conversation_claims": """
+        CREATE TABLE IF NOT EXISTS conversation_claims (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            phone_number TEXT NOT NULL UNIQUE,
+            claimed_by TEXT NOT NULL,
+            claimed_at TEXT NOT NULL DEFAULT (datetime('now')),
+            released_at TEXT,
+            transition_sent INTEGER NOT NULL DEFAULT 0,
+            notes TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_claims_phone
+            ON conversation_claims(phone_number);
+
+        CREATE INDEX IF NOT EXISTS idx_claims_active
+            ON conversation_claims(released_at)
+            WHERE released_at IS NULL;
+    """,
 }
 
 

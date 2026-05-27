@@ -12,6 +12,7 @@ from app.config import (
     META_VERIFY_TOKEN,
     DEBUG,
     WHATSAPP_MODE,
+    ADMIN_API_KEY,
     validate_runtime_config,
 )
 from app.db import init_db
@@ -38,6 +39,12 @@ app.mount("/chat", StaticFiles(directory="ui", html=True), name="ui")
 @app.get("/")
 def root_redirect():
     return RedirectResponse(url="/chat/index.html")
+
+
+@app.get("/admin")
+def admin_panel():
+    from fastapi.responses import FileResponse
+    return FileResponse("ui/admin/index.html")
 
 
 class SimpleRateLimiter:
@@ -264,12 +271,70 @@ def ask_public_endpoint(request: Request, body: AskRequest):
     )
 
 
+# ============================================================
+# Admin endpoints (human handoff)
+# ============================================================
+class ClaimRequest(BaseModel):
+    claimed_by: str = "admin"
+    notes: str = ""
+
+
+class ReplyRequest(BaseModel):
+    body: str
+
+
+def _validate_admin_key(request: Request):
+    if not ADMIN_API_KEY:
+        raise HTTPException(status_code=503, detail="Admin API not configured")
+    api_key = request.headers.get("X-Admin-Key")
+    if not api_key or api_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing admin key")
+
+
+@app.get("/admin/conversations")
+def admin_conversations(request: Request):
+    _validate_admin_key(request)
+    return {"conversations": store.get_conversations_summary(limit=100)}
+
+
+@app.get("/admin/conversations/{phone}")
+def admin_conversation_detail(phone: str, request: Request):
+    _validate_admin_key(request)
+    return {
+        "phone": phone,
+        "history": store.get_full_conversation(phone, limit=100),
+        "claimed": store.is_claimed(phone),
+    }
+
+
+@app.post("/admin/conversations/{phone}/claim")
+def admin_claim_conversation(phone: str, request: Request, body: ClaimRequest):
+    _validate_admin_key(request)
+    ok = store.claim_conversation(phone, body.claimed_by, body.notes)
+    return {"status": "claimed" if ok else "error", "phone": phone}
+
+
+@app.post("/admin/conversations/{phone}/release")
+def admin_release_conversation(phone: str, request: Request):
+    _validate_admin_key(request)
+    ok = store.release_conversation(phone)
+    return {"status": "released" if ok else "not_found", "phone": phone}
+
+
+@app.post("/admin/conversations/{phone}/reply")
+def admin_reply_conversation(phone: str, request: Request, body: ReplyRequest):
+    _validate_admin_key(request)
+    msg_id = whatsapp_service.send_manual_reply(phone, body.body)
+    return {"status": "sent" if not msg_id.startswith("[") else "error", "message_id": msg_id}
+
+
 if __name__ == "__main__":
     import uvicorn
     print("[START] Iniciando Rodrigo Rodriguez - Secretaria Virtual")
     print(f"   Modo WhatsApp: {WHATSAPP_MODE}")
     print(f"   URL: http://0.0.0.0:8000")
     print(f"   UI Web:      http://127.0.0.1:8000/chat")
+    print(f"   Admin:       http://127.0.0.1:8000/admin")
     print(f"   Health:      http://127.0.0.1:8000/health")
     print(f"   Webhook:     http://127.0.0.1:8000/webhook")
     print(f"   Ask API:     http://127.0.0.1:8000/ask")

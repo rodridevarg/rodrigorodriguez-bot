@@ -214,5 +214,151 @@ class SQLiteWhatsAppStore:
             )
             conn.commit()
 
+    # ---------------------------------------------------------
+    # Conversation claim / human handoff
+    # ---------------------------------------------------------
+    def claim_conversation(
+        self, phone_number: str, claimed_by: str, notes: Optional[str] = None
+    ) -> bool:
+        with get_connection() as conn:
+            try:
+                conn.execute(
+                    """
+                    INSERT INTO conversation_claims
+                        (phone_number, claimed_by, notes, transition_sent)
+                    VALUES (?, ?, ?, 0)
+                    ON CONFLICT(phone_number) DO UPDATE SET
+                        claimed_by = excluded.claimed_by,
+                        claimed_at = datetime('now'),
+                        released_at = NULL,
+                        transition_sent = 0,
+                        notes = COALESCE(excluded.notes, conversation_claims.notes)
+                    """,
+                    (phone_number, claimed_by, notes),
+                )
+                conn.commit()
+                return True
+            except Exception:
+                conn.rollback()
+                return False
+
+    def release_conversation(self, phone_number: str) -> bool:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                UPDATE conversation_claims
+                SET released_at = datetime('now')
+                WHERE phone_number = ? AND released_at IS NULL
+                """,
+                (phone_number,),
+            )
+            conn.commit()
+            return cur.rowcount > 0
+
+    def is_claimed(self, phone_number: str) -> bool:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                SELECT 1 FROM conversation_claims
+                WHERE phone_number = ? AND released_at IS NULL
+                """,
+                (phone_number,),
+            )
+            return cur.fetchone() is not None
+
+    def get_active_claims(self) -> List[Dict]:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                SELECT * FROM conversation_claims
+                WHERE released_at IS NULL
+                ORDER BY claimed_at DESC
+                """
+            )
+            return [dict(row) for row in cur.fetchall()]
+
+    def mark_transition_sent(self, phone_number: str) -> bool:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                UPDATE conversation_claims
+                SET transition_sent = 1
+                WHERE phone_number = ? AND released_at IS NULL
+                """,
+                (phone_number,),
+            )
+            conn.commit()
+            return cur.rowcount > 0
+
+    def should_send_transition(self, phone_number: str) -> bool:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                SELECT transition_sent FROM conversation_claims
+                WHERE phone_number = ? AND released_at IS NULL
+                """,
+                (phone_number,),
+            )
+            row = cur.fetchone()
+            return row is not None and not row["transition_sent"]
+
+    def get_conversations_summary(self, limit: int = 50) -> List[Dict]:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                SELECT
+                    im.from_number,
+                    im.text AS last_message,
+                    im.received_at,
+                    im.processing_status,
+                    CASE WHEN cc.released_at IS NULL AND cc.phone_number IS NOT NULL
+                         THEN 'claimed'
+                         ELSE 'bot'
+                    END AS control,
+                    cc.claimed_by,
+                    cc.claimed_at
+                FROM inbound_messages im
+                LEFT JOIN conversation_claims cc
+                    ON cc.phone_number = im.from_number
+                    AND cc.released_at IS NULL
+                WHERE im.id = (
+                    SELECT MAX(id) FROM inbound_messages
+                    WHERE from_number = im.from_number
+                )
+                ORDER BY im.received_at DESC
+                LIMIT ?
+                """,
+                (limit,),
+            )
+            return [dict(row) for row in cur.fetchall()]
+
+    def get_full_conversation(self, phone_number: str, limit: int = 100) -> List[Dict]:
+        with get_connection() as conn:
+            cur = conn.execute(
+                """
+                SELECT
+                    'inbound' AS direction,
+                    im.text AS content,
+                    im.received_at AS ts,
+                    NULL AS send_status
+                FROM inbound_messages im
+                WHERE im.from_number = ?
+                UNION ALL
+                SELECT
+                    'outbound' AS direction,
+                    om.body AS content,
+                    COALESCE(om.sent_at, om.created_at) AS ts,
+                    om.send_status
+                FROM outbound_messages om
+                WHERE om.to_number = ?
+                ORDER BY ts DESC
+                LIMIT ?
+                """,
+                (phone_number, phone_number, limit),
+            )
+            rows = [dict(row) for row in cur.fetchall()]
+            rows.reverse()
+            return rows
+
 
 store = SQLiteWhatsAppStore()

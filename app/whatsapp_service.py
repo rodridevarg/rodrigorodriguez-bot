@@ -1,6 +1,6 @@
 import traceback
 from typing import Dict, Optional
-from app.config import CONVERSATION_MEMORY_MAX_TURNS
+from app.config import CONVERSATION_MEMORY_MAX_TURNS, HANDOFF_TRANSITION_MESSAGE
 from app.rag_service import answer_question
 from app.whatsapp_models import InboundTextMessage
 from app.whatsapp_store import store
@@ -32,6 +32,32 @@ class WhatsAppService:
 
         return "nuevo"
 
+    def _send_outbound(
+        self, inbound_id: int, to_number: str, body: str, provider: str
+    ) -> str:
+        outbound_id = store.create_outbound_message(
+            inbound_message_id=inbound_id,
+            to_number=to_number,
+            body=body,
+            provider=provider,
+        )
+        try:
+            send_result = self.sender.send_text(to_number, body)
+            provider_msg_id = send_result.get("message_id")
+            if provider_msg_id:
+                store.mark_outbound_sent(outbound_id, provider_msg_id)
+                return provider_msg_id
+            else:
+                error_msg = f"[ERROR al enviar: {send_result.get('error_body', 'sin ID de mensaje')}]"
+                store.mark_outbound_failed(outbound_id, error_msg)
+                return error_msg
+        except Exception as e:
+            error_msg = f"[ERROR al enviar: {e}]"
+            store.mark_outbound_failed(outbound_id, error_msg)
+            print(error_msg)
+            traceback.print_exc()
+            return error_msg
+
     def process_inbound_by_id(self, inbound_id: int) -> str:
         inbound = store.get_inbound_by_id(inbound_id)
         if not inbound:
@@ -42,6 +68,26 @@ class WhatsAppService:
 
         store.mark_inbound_processing(inbound["provider_message_id"])
 
+        to_number = normalize_phone_for_meta(inbound["from_number"])
+
+        # Human handoff check
+        if store.is_claimed(inbound["from_number"]):
+            if store.should_send_transition(inbound["from_number"]):
+                msg_id = self._send_outbound(
+                    inbound_id=inbound["id"],
+                    to_number=to_number,
+                    body=HANDOFF_TRANSITION_MESSAGE,
+                    provider=inbound["provider"],
+                )
+                store.mark_transition_sent(inbound["from_number"])
+                store.mark_inbound_done(inbound["provider_message_id"])
+                return f"[HANDOFF TRANSITION] {msg_id}"
+            else:
+                # Already notified, stay silent
+                store.mark_inbound_done(inbound["provider_message_id"])
+                return "[HANDOFF SILENT] Conversación reclamada, sin respuesta."
+
+        # Normal bot flow
         history = store.get_conversation_history(
             inbound["from_number"], limit=CONVERSATION_MEMORY_MAX_TURNS
         )
@@ -55,33 +101,42 @@ class WhatsAppService:
                 "Escribime por WhatsApp y te ayudo: +54 9 2477 614405"
             )
 
-        to_number = normalize_phone_for_meta(inbound["from_number"])
-
-        outbound_id = store.create_outbound_message(
-            inbound_message_id=inbound["id"],
+        msg_id = self._send_outbound(
+            inbound_id=inbound["id"],
             to_number=to_number,
             body=answer,
             provider=inbound["provider"],
         )
 
-        try:
-            send_result = self.sender.send_text(to_number, answer)
-            provider_msg_id = send_result.get("message_id")
+        if msg_id.startswith("[ERROR"):
+            store.mark_inbound_failed(inbound["provider_message_id"], msg_id)
+            return msg_id
+        else:
+            store.mark_inbound_done(inbound["provider_message_id"])
+            return msg_id
 
+    def send_manual_reply(self, phone_number: str, body: str) -> str:
+        to_number = normalize_phone_for_meta(phone_number)
+        # Create a dummy inbound reference (id=0) since this is manual
+        outbound_id = store.create_outbound_message(
+            inbound_message_id=0,
+            to_number=to_number,
+            body=body,
+            provider="whatsapp",
+        )
+        try:
+            send_result = self.sender.send_text(to_number, body)
+            provider_msg_id = send_result.get("message_id")
             if provider_msg_id:
                 store.mark_outbound_sent(outbound_id, provider_msg_id)
-                store.mark_inbound_done(inbound["provider_message_id"])
                 return provider_msg_id
             else:
                 error_msg = f"[ERROR al enviar: {send_result.get('error_body', 'sin ID de mensaje')}]"
                 store.mark_outbound_failed(outbound_id, error_msg)
-                store.mark_inbound_failed(inbound["provider_message_id"], error_msg)
                 return error_msg
-
         except Exception as e:
             error_msg = f"[ERROR al enviar: {e}]"
             store.mark_outbound_failed(outbound_id, error_msg)
-            store.mark_inbound_failed(inbound["provider_message_id"], error_msg)
             print(error_msg)
             traceback.print_exc()
             return error_msg
