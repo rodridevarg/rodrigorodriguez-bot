@@ -422,6 +422,11 @@
             const isClaimed = data.claimed;
             const history = data.history || [];
 
+            // Preserve input value and focus during re-render
+            const oldInput = document.getElementById('replyInput');
+            const savedValue = oldInput ? oldInput.value : '';
+            const hadFocus = oldInput && document.activeElement === oldInput;
+
             chatArea.innerHTML = `
                 <div class="chat-header">
                     <div class="info">
@@ -452,11 +457,24 @@
                 </div>
             `;
 
-            // Scroll to bottom
-            setTimeout(() => {
-                const container = document.getElementById('messagesContainer');
-                if (container) container.scrollTop = container.scrollHeight;
-            }, 50);
+            // Restore input value and focus
+            const newInput = document.getElementById('replyInput');
+            if (newInput && savedValue) {
+                newInput.value = savedValue;
+                if (hadFocus) {
+                    newInput.focus();
+                    // Restore cursor position at end
+                    newInput.setSelectionRange(savedValue.length, savedValue.length);
+                }
+            }
+
+            // Scroll to bottom only if user wasn't typing
+            if (!hadFocus) {
+                setTimeout(() => {
+                    const container = document.getElementById('messagesContainer');
+                    if (container) container.scrollTop = container.scrollHeight;
+                }, 50);
+            }
         }
 
         async function claimConversation(phone) {

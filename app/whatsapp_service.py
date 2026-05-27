@@ -117,9 +117,9 @@ class WhatsAppService:
 
     def send_manual_reply(self, phone_number: str, body: str) -> str:
         to_number = normalize_phone_for_meta(phone_number)
-        # Create a dummy inbound reference (id=0) since this is manual
+        # Manual reply has no associated inbound message
         outbound_id = store.create_outbound_message(
-            inbound_message_id=0,
+            inbound_message_id=None,
             to_number=to_number,
             body=body,
             provider="whatsapp",

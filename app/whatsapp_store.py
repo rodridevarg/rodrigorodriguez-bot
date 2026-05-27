@@ -148,7 +148,7 @@ class SQLiteWhatsAppStore:
 
     def create_outbound_message(
         self,
-        inbound_message_id: int,
+        inbound_message_id: Optional[int],
         to_number: str,
         body: str,
         provider: str = "whatsapp",
