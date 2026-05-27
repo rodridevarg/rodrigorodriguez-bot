@@ -15,6 +15,7 @@ from app.config import (
     ADMIN_API_KEY,
     validate_runtime_config,
 )
+from app.sse_manager import sse_manager
 from app.db import init_db
 from app.db_migrations import apply_migrations
 from app.whatsapp_parser import parse_webhook_get, parse_webhook_post
@@ -193,8 +194,12 @@ async def webhook_post(request: Request):
                 response_id = "[duplicado ignorado]"
             else:
                 response_id = "[pendiente - worker lo procesará]"
+                # Notify admin panel in real-time
+                sse_manager.notify_new_message(msg.from_number, msg.text[:100])
         else:
             response_id = whatsapp_service.handle_inbound_text(msg)
+            if not response_id.startswith("["):
+                sse_manager.notify_new_message(msg.from_number, msg.text[:100])
 
         responses.append({
             "type": "message",
@@ -272,6 +277,22 @@ def ask_public_endpoint(request: Request, body: AskRequest):
 
 
 # ============================================================
+# Admin SSE (real-time updates)
+# ============================================================
+@app.get("/admin/events")
+async def admin_events(request: Request):
+    _validate_admin_key(request)
+    return StreamingResponse(
+        sse_manager.subscribe(request),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
+    )
+
+
+# ============================================================
 # Admin endpoints (human handoff)
 # ============================================================
 class ClaimRequest(BaseModel):
@@ -287,6 +308,8 @@ def _validate_admin_key(request: Request):
     if not ADMIN_API_KEY:
         raise HTTPException(status_code=503, detail="Admin API not configured")
     api_key = request.headers.get("X-Admin-Key")
+    if not api_key:
+        api_key = request.query_params.get("admin_key")
     if not api_key or api_key != ADMIN_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid or missing admin key")
 

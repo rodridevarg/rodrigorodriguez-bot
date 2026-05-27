@@ -514,9 +514,46 @@
             }
         }
 
+        let eventSource = null;
+
+        function initSSE() {
+            if (eventSource) {
+                eventSource.close();
+            }
+            eventSource = new EventSource(`${API_BASE}/admin/events`, {
+                headers: { 'X-Admin-Key': adminKey }
+            });
+            // EventSource does not support custom headers natively in all browsers,
+            // so we pass the key as query param as fallback
+            eventSource.close();
+            eventSource = new EventSource(`${API_BASE}/admin/events?admin_key=${encodeURIComponent(adminKey)}`);
+
+            eventSource.onmessage = (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'new_message') {
+                        playNotificationSound();
+                        loadConversations();
+                        if (selectedPhone === data.from_number) {
+                            loadChat(selectedPhone);
+                        }
+                    } else if (data.type === 'status_change') {
+                        if (selectedPhone) loadChat(selectedPhone);
+                    }
+                } catch (err) {
+                    // ignore keepalive or parse errors
+                }
+            };
+
+            eventSource.onerror = () => {
+                // Auto-reconnect after 3 seconds
+                setTimeout(initSSE, 3000);
+            };
+        }
+
         function init() {
             loadConversations();
-            refreshInterval = setInterval(loadConversations, 5000);
+            initSSE();
         }
 
         if (adminKey) init();
