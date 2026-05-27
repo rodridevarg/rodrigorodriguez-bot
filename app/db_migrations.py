@@ -71,6 +71,28 @@ MIGRATIONS = {
             ON conversation_claims(released_at)
             WHERE released_at IS NULL;
     """,
+    "003_outbound_nullable_inbound": """
+        -- Mensajes manuales (human handoff) no tienen inbound asociado.
+        PRAGMA foreign_keys = OFF;
+        CREATE TABLE outbound_messages_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            inbound_message_id INTEGER REFERENCES inbound_messages(id),
+            to_number TEXT NOT NULL,
+            body TEXT NOT NULL,
+            provider TEXT NOT NULL DEFAULT 'whatsapp',
+            provider_message_id TEXT UNIQUE,
+            send_status TEXT NOT NULL DEFAULT 'pending',
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            sent_at TEXT,
+            last_error TEXT
+        );
+        INSERT INTO outbound_messages_new SELECT * FROM outbound_messages;
+        DROP TABLE outbound_messages;
+        ALTER TABLE outbound_messages_new RENAME TO outbound_messages;
+        CREATE INDEX IF NOT EXISTS idx_outbound_provider_id
+            ON outbound_messages(provider_message_id);
+        PRAGMA foreign_keys = ON;
+    """,
 }
 
 
