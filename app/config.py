@@ -32,7 +32,7 @@ FALLBACK_MESSAGE = os.getenv(
     "No encontré información sobre eso en mi base de conocimiento. Te sugiero contactar para más detalles.",
 )
 SYSTEM_PROMPT_PATH = _env_path("SYSTEM_PROMPT_PATH", DATA_DIR / "system_prompt.txt")
-COLLECTION_NAME = os.getenv("COLLECTION_NAME", "bot_docs")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "rodrigo_docs")
 
 WHATSAPP_MODE = os.getenv("WHATSAPP_MODE", "fake")
 META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")

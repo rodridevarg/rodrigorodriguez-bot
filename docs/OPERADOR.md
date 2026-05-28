@@ -169,7 +169,11 @@ El prompt define la personalidad y reglas de la IA.
 nano /mnt/data/cliente-medico/data/system_prompt.txt
 ```
 
-Despues de editar, **no hace falta reindexar**. El prompt se lee en tiempo real.
+Despues de editar, **no hace falta reindexar**, pero **si reiniciar los contenedores** para que el cambio surta efecto:
+
+```bash
+cd /mnt/data/cliente-medico && docker compose restart
+```
 
 ### Tips para un buen prompt
 

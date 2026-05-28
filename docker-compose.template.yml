@@ -47,6 +47,7 @@ services:
 
 volumes:
   {{SLUG}}-data:
+    name: {{SLUG}}-data
     driver: local
 
 networks:

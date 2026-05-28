@@ -107,6 +107,16 @@ done
 CLIENT_SLUG=$(slugify "$CLIENT_SLUG")
 [[ -z "$CLIENT_SLUG" ]] && error_exit "Slug invalido"
 
+# Validar formato de slug
+if [[ ! "$CLIENT_SLUG" =~ ^[a-z0-9-]+$ ]]; then
+    error_exit "Slug invalido. Solo letras minusculas, numeros y guiones."
+fi
+
+# Validar dominio
+if [[ ! "$CLIENT_DOMAIN" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$ ]]; then
+    error_exit "Dominio invalido: '${CLIENT_DOMAIN}'"
+fi
+
 CLIENT_DIR="${CLIENTS_BASE_DIR}/cliente-${CLIENT_SLUG}"
 
 # Verificar que no exista ya
@@ -114,7 +124,7 @@ CLIENT_DIR="${CLIENTS_BASE_DIR}/cliente-${CLIENT_SLUG}"
 
 # Verificar que el dominio no este en Caddyfile
 if [[ -f "$CADDYFILE" ]]; then
-    if grep -q "${CLIENT_DOMAIN}" "$CADDYFILE"; then
+    if grep -Fq "${CLIENT_DOMAIN}" "$CADDYFILE"; then
         error_exit "El dominio '${CLIENT_DOMAIN}' ya existe en ${CADDYFILE}"
     fi
 fi
@@ -176,45 +186,45 @@ cat > "${CLIENT_DIR}/.env" <<EOF
 # Creado: $(date -Iseconds)
 
 # LLM
-LLM_API_KEY=${LLM_KEY}
-LLM_BASE_URL=${LLM_URL}
-LLM_MODEL=${LLM_MODEL}
+LLM_API_KEY="${LLM_KEY}"
+LLM_BASE_URL="${LLM_URL}"
+LLM_MODEL="${LLM_MODEL}"
 
 # Branding
-BOT_NAME=${BOT_NAME}
-BOT_DESCRIPTION=${BOT_DESCRIPTION}
-CONTACT_PHONE=${CLIENT_PHONE}
-CONTACT_EMAIL=${CLIENT_EMAIL}
-FALLBACK_MESSAGE=No encontré información sobre eso en mi base de conocimiento. Te sugiero contactar para más detalles.
+BOT_NAME="${BOT_NAME}"
+BOT_DESCRIPTION="${BOT_DESCRIPTION}"
+CONTACT_PHONE="${CLIENT_PHONE}"
+CONTACT_EMAIL="${CLIENT_EMAIL}"
+FALLBACK_MESSAGE="No encontré información sobre eso en mi base de conocimiento. Te sugiero contactar para más detalles."
 
 # Base de datos / Vector Store
-COLLECTION_NAME=${COLLECTION_NAME}
+COLLECTION_NAME="${COLLECTION_NAME}"
 
 # WhatsApp
-WHATSAPP_MODE=${WHATSAPP_MODE}
-META_PHONE_NUMBER_ID=${META_PHONE_NUMBER_ID}
-META_ACCESS_TOKEN=
-META_WABA_ID=
-META_APP_SECRET=
-META_VERIFY_TOKEN=${CLIENT_SLUG}_webhook_verify_$(date +%s)
+WHATSAPP_MODE="${WHATSAPP_MODE}"
+META_PHONE_NUMBER_ID="${META_PHONE_NUMBER_ID}"
+META_ACCESS_TOKEN=""
+META_WABA_ID=""
+META_APP_SECRET=""
+META_VERIFY_TOKEN="${CLIENT_SLUG}_webhook_verify_$(date +%s)"
 META_GRAPH_VERSION=v23.0
 META_VALIDATE_SIGNATURE=false
-PUBLIC_WEBHOOK_URL=https://${CLIENT_DOMAIN}
+PUBLIC_WEBHOOK_URL="https://${CLIENT_DOMAIN}"
 
 # Webhook
 WEBHOOK_MODE=async
 
 # Dominio
-DOMAIN=${CLIENT_DOMAIN}
+DOMAIN="${CLIENT_DOMAIN}"
 
 # API
-ASK_API_KEY=$(generate_key)
+ASK_API_KEY="$(generate_key)"
 ASK_RATE_LIMIT_REQUESTS=20
 ASK_RATE_LIMIT_WINDOW_SECONDS=60
 
 # Admin
-ADMIN_API_KEY=${ADMIN_KEY}
-HANDOFF_TRANSITION_MESSAGE=Estás siendo atendido por un asesor humano. En breve te responderá.
+ADMIN_API_KEY="${ADMIN_KEY}"
+HANDOFF_TRANSITION_MESSAGE="Estás siendo atendido por un asesor humano. En breve te responderá."
 
 # Memoria
 CONVERSATION_MEMORY_MAX_TURNS=20

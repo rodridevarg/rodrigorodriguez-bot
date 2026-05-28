@@ -49,15 +49,19 @@ echo "--- Red compartida ---"
 docker network inspect boston-ai_default --format '{{range .Containers}}{{.Name}} {{.IPv4Address}}{{println}}{{end}}' 2>/dev/null || echo "   Red no encontrada o vacia"
 
 echo ""
-# Test HTTP (endpoints genericos, ajustar dominios si es necesario)
+# Test HTTP dinamico: leer dominios de cada cliente
 echo "--- Test endpoints ---"
-echo "aibrain health:"
-curl -s https://bot.bostonuniformes.com.ar/health 2>/dev/null | head -c 200 || echo " [ERROR o timeout]"
-echo ""
-echo "rodrigo health:"
-curl -s https://bot.rodrigorodriguez.com.ar/health 2>/dev/null | head -c 200 || echo " [ERROR o timeout]"
+for ENV_FILE in /mnt/data/cliente-*/.env; do
+    [ -f "$ENV_FILE" ] || continue
+    CLIENT_DOMAIN=$(grep "^DOMAIN=" "$ENV_FILE" | cut -d= -f2- | tr -d '"' || true)
+    CLIENT_SLUG=$(basename "$(dirname "$ENV_FILE")" | sed 's/cliente-//')
+    if [ -n "$CLIENT_DOMAIN" ]; then
+        echo "${CLIENT_SLUG} (${CLIENT_DOMAIN}):"
+        curl -s "https://${CLIENT_DOMAIN}/health" 2>/dev/null | head -c 200 || echo " [ERROR o timeout]"
+        echo ""
+    fi
+done
 
-echo ""
 echo "========================================"
 echo "  NOTA: Si el disco >80% o RAM <500MB,"
 echo "  considerar ampliar el VPS."
