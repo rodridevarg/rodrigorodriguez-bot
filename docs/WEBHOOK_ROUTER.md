@@ -50,8 +50,10 @@ META_VERIFY_TOKEN=rodrigo_webhook_verify_2024
 META_APP_SECRET=tu_app_secret_de_meta
 
 # Clave para admin (registrar/desregistrar clientes)
-ADMIN_API_KEY=$(openssl rand -hex 24)
+ADMIN_API_KEY=tu_clave_generada_aqui
 ```
+
+> Generar la clave con: `openssl rand -hex 24`
 
 Reiniciar despues de editar:
 ```bash
@@ -71,7 +73,7 @@ cd /mnt/data/webhook-router && docker compose restart
 ROUTER_KEY=$(grep ADMIN_API_KEY /mnt/data/webhook-router/.env | cut -d= -f2 | tr -d '"')
 PHONE_ID=$(grep META_PHONE_NUMBER_ID /mnt/data/rodrigo-bot/.env | cut -d= -f2 | tr -d '"')
 
-curl -X POST http://webhook-router:8100/admin/register \
+curl -X POST http://127.0.0.1:8100/admin/register \
   -H "Content-Type: application/json" \
   -H "X-Admin-Key: ${ROUTER_KEY}" \
   -d "{\"phone_number_id\":\"${PHONE_ID}\",\"client_slug\":\"rodrigo\",\"target_url\":\"http://rodrigo-web:8000/webhook\"}"
@@ -86,7 +88,7 @@ Al crear cliente con `new_client.sh`, se registra automaticamente si:
 
 Para verificar:
 ```bash
-curl -H "X-Admin-Key: ${ROUTER_KEY}" http://webhook-router:8100/admin/routes
+curl -H "X-Admin-Key: ${ROUTER_KEY}" http://127.0.0.1:8100/admin/routes
 ```
 
 ## Desregistrar un cliente
@@ -95,7 +97,7 @@ Al eliminar con `remove_client.sh`, se desregistra automaticamente.
 
 Manualmente:
 ```bash
-curl -X POST http://webhook-router:8100/admin/unregister \
+curl -X POST http://127.0.0.1:8100/admin/unregister \
   -H "Content-Type: application/json" \
   -H "X-Admin-Key: ${ROUTER_KEY}" \
   -d '{"phone_number_id":"PHONE_NUMBER_ID_AQUI"}'
@@ -109,7 +111,7 @@ curl -X POST http://webhook-router:8100/admin/unregister \
 
 El numero de telefono no esta registrado. Verificar:
 ```bash
-curl -H "X-Admin-Key: ${ROUTER_KEY}" http://webhook-router:8100/admin/routes
+curl -H "X-Admin-Key: ${ROUTER_KEY}" http://127.0.0.1:8100/admin/routes
 ```
 
 ### Meta dice "Webhook no verificado"

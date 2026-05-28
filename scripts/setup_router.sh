@@ -18,7 +18,7 @@ mkdir -p "$ROUTER_DIR"
 
 # 2. Copiar codigo del router
 echo "[2/4] Copiando codigo..."
-cp -r "${TEMPLATE_DIR}/webhook-router/"* "$ROUTER_DIR/"
+cp -a "${TEMPLATE_DIR}/webhook-router/." "$ROUTER_DIR/"
 
 # 3. Configurar .env
 echo "[3/4] Configurando .env..."
@@ -43,7 +43,7 @@ echo "  ROUTER CONFIGURADO"
 echo "========================================"
 echo ""
 echo "  Directorio: ${ROUTER_DIR}"
-echo "  Health:     http://webhook-router:8100/health"
+echo "  Health:     http://127.0.0.1:8100/health"
 echo ""
 echo "  Proximos pasos:"
 echo "  1. Editar ${ROUTER_DIR}/.env con valores reales de Meta"

@@ -73,17 +73,21 @@ if [[ -f "${CLIENT_DIR}/.env" ]]; then
     META_PHONE_NUMBER_ID=$(grep "^META_PHONE_NUMBER_ID=" "${CLIENT_DIR}/.env" | cut -d= -f2- | tr -d '"' || true)
 fi
 
+ROUTER_URL="http://127.0.0.1:8100"
 ROUTER_ADMIN_KEY=""
 if [[ -f "/mnt/data/webhook-router/.env" ]]; then
     ROUTER_ADMIN_KEY=$(grep "^ADMIN_API_KEY=" /mnt/data/webhook-router/.env | cut -d= -f2- | tr -d '"' || true)
 fi
 
 if [[ -n "$ROUTER_ADMIN_KEY" && -n "$META_PHONE_NUMBER_ID" ]]; then
-    curl -s -X POST http://webhook-router:8100/admin/unregister \
+    if curl --fail --silent --show-error -X POST "${ROUTER_URL}/admin/unregister" \
         -H "Content-Type: application/json" \
         -H "X-Admin-Key: ${ROUTER_ADMIN_KEY}" \
-        -d "{\"phone_number_id\":\"${META_PHONE_NUMBER_ID}\"}" \
-        >/dev/null && echo "   [OK] Desregistrado del webhook-router." || echo "   [WARN] No se pudo desregistrar del webhook-router."
+        -d "{\"phone_number_id\":\"${META_PHONE_NUMBER_ID}\"}" >/dev/null; then
+        echo "   [OK] Desregistrado del webhook-router."
+    else
+        echo "   [WARN] No se pudo desregistrar del webhook-router."
+    fi
 else
     echo "   [INFO] Router no configurado o sin PHONE_NUMBER_ID. Omitiendo desregistro."
 fi

@@ -11,7 +11,7 @@ from app.config import (
     validate_runtime_config,
 )
 from app.db import init_db, get_route, register_route, unregister_route, list_routes
-from webhook_signature import validate_meta_signature, META_SIGNATURE_HEADER
+from app.webhook_signature import validate_meta_signature, META_SIGNATURE_HEADER
 
 app = FastAPI(title="Webhook Router - Multi-Cliente")
 
@@ -110,31 +110,22 @@ async def webhook_post(request: Request):
                     "Content-Type": "application/json",
                 },
             )
+            response.raise_for_status()
         return JSONResponse(
             {
                 "status": "received",
                 "routed": True,
                 "client_slug": route["client_slug"],
                 "target_url": target_url,
-                "target_status": response.status_code,
             },
             status_code=200,
         )
     except httpx.TimeoutException:
-        return JSONResponse(
-            {"status": "received", "routed": False, "reason": "target_timeout"},
-            status_code=200,
-        )
-    except Exception as e:
-        return JSONResponse(
-            {
-                "status": "received",
-                "routed": False,
-                "reason": "target_error",
-                "error": str(e),
-            },
-            status_code=200,
-        )
+        raise HTTPException(status_code=504, detail="Target timeout")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail=f"Target returned {e.response.status_code}")
+    except httpx.HTTPError:
+        raise HTTPException(status_code=502, detail="Target unreachable")
 
 
 # ============================================================
