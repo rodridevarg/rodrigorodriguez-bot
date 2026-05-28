@@ -13,6 +13,8 @@ from app.config import (
     DEBUG,
     WHATSAPP_MODE,
     ADMIN_API_KEY,
+    BOT_NAME,
+    BOT_DESCRIPTION,
     validate_runtime_config,
 )
 from app.sse_manager import sse_manager
@@ -24,7 +26,7 @@ from app.whatsapp_store import store
 from app.webhook_signature import validate_meta_signature, META_SIGNATURE_HEADER
 from app.rag_service import answer_question
 
-app = FastAPI(title="Rodrigo Rodriguez - Secretaria Virtual")
+app = FastAPI(title=BOT_NAME)
 
 app.add_middleware(
     CORSMiddleware,
@@ -144,6 +146,14 @@ def health():
             "vector_store": "configured",
             "ask_api": "configured" if ask_configured else "not_configured",
         },
+    }
+
+
+@app.get("/config")
+def get_config():
+    return {
+        "bot_name": BOT_NAME,
+        "bot_description": BOT_DESCRIPTION,
     }
 
 
@@ -353,12 +363,13 @@ def admin_reply_conversation(phone: str, request: Request, body: ReplyRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    print("[START] Iniciando Rodrigo Rodriguez - Secretaria Virtual")
+    print(f"[START] Iniciando {BOT_NAME}")
     print(f"   Modo WhatsApp: {WHATSAPP_MODE}")
     print(f"   URL: http://0.0.0.0:8000")
     print(f"   UI Web:      http://127.0.0.1:8000/chat")
     print(f"   Admin:       http://127.0.0.1:8000/admin")
     print(f"   Health:      http://127.0.0.1:8000/health")
+    print(f"   Config:      http://127.0.0.1:8000/config")
     print(f"   Webhook:     http://127.0.0.1:8000/webhook")
     print(f"   Ask API:     http://127.0.0.1:8000/ask")
     print(f"   Ask Public:  http://127.0.0.1:8000/ask-public")

@@ -13,11 +13,11 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.rag_service import answer_question
-from app.config import DEBUG
+from app.config import DEBUG, BOT_NAME
 
 
 def main():
-    print("[BOT] Secretaria Virtual - Rodrigo Rodriguez (Chat Local)")
+    print(f"[BOT] {BOT_NAME} (Chat Local)")
     print("Escribi tu pregunta o 'salir' para terminar.\n")
     print("[INFO] Usando busqueda semantica (entiende sinonimos y reformulaciones)\n")
 

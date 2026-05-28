@@ -1,13 +1,7 @@
 from typing import List, Dict, Optional
 from app.retriever import retrieve
 from app.llm_client import ask_llm
-from app.config import TOP_K, DEBUG, CONVERSATION_ACTIVE_CONTEXT_TURNS
-
-SYSTEM_PROMPT = """Sos la Secretaria Virtual de Rodrigo Rodriguez. Ayudás a emprendedores y profesionales a vender más con atención automatizada por WhatsApp.
-
-Respondé usando ÚNICAMENTE la información proporcionada en el contexto.
-Si no encontrás la respuesta en el contexto, decí claramente que no lo sabés y sugerí contactar por WhatsApp a Rodrigo.
-Sé cercano, profesional y entusiasta. Respondé en español. No inventes precios ni promesas que no estén en el contexto."""
+from app.config import TOP_K, DEBUG, CONVERSATION_ACTIVE_CONTEXT_TURNS, SYSTEM_PROMPT, FALLBACK_MESSAGE, CONTACT_PHONE
 
 
 def _build_retrieval_query(question: str, history: Optional[List[Dict]]) -> str:
@@ -59,11 +53,11 @@ def answer_question(
         retrieved = retrieve(question, top_k=TOP_K)
 
     if not retrieved:
+        answer = FALLBACK_MESSAGE
+        if CONTACT_PHONE:
+            answer += f" WhatsApp: {CONTACT_PHONE}"
         return {
-            "answer": (
-                "No encontré información sobre eso en mi base de conocimiento. "
-                "Te sugiero contactar a Rodrigo por WhatsApp: +54 9 2477 614405"
-            ),
+            "answer": answer,
             "sources": [],
         }
 

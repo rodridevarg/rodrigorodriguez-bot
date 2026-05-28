@@ -1,0 +1,57 @@
+# Template docker-compose para multi-cliente
+# Reemplazar {{SLUG}} por el slug del cliente al crear instancia
+
+services:
+  web:
+    build: .
+    container_name: {{SLUG}}-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - APP_DB_PATH=/app/data/app.sqlite3
+    volumes:
+      - {{SLUG}}-data:/app/data
+    command: >
+      python -m uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --workers 1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - boston-ai_default
+
+  worker:
+    build: .
+    container_name: {{SLUG}}-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - APP_DB_PATH=/app/data/app.sqlite3
+    volumes:
+      - {{SLUG}}-data:/app/data
+    command: python scripts/run_worker.py
+    depends_on:
+      web:
+        condition: service_healthy
+    deploy:
+      replicas: 1
+    networks:
+      - boston-ai_default
+
+volumes:
+  {{SLUG}}-data:
+    name: {{SLUG}}-data
+    driver: local
+
+networks:
+  boston-ai_default:
+    name: boston-ai_default
+    driver: bridge
+    external: true

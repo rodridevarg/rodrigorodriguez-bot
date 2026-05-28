@@ -243,6 +243,45 @@ boston-ai_default (bridge network)
 
 ---
 
+## Escalabilidad y Multi-Cliente
+
+### Capacidad por VPS
+
+Cada instancia del bot consume aproximadamente:
+- **RAM**: ~300MB (web + worker + SQLite + ChromaDB)
+- **Disco**: ~500MB base + documentos + embeddings
+
+| VPS (ejemplo) | RAM | Clientes estimados |
+|---------------|-----|-------------------|
+| 2 vCPU / 4GB RAM | ~3GB disponible | ~8-10 clientes |
+| 4 vCPU / 8GB RAM | ~7GB disponible | ~18-20 clientes |
+
+### Plan de escalado
+
+1. **Monitoreo**: ejecutar `./scripts/check_vps.sh` semanalmente.
+2. **Umbrales de alerta**:
+   - Disco > 80% → limpiar logs o migrar clientes
+   - RAM disponible < 500MB → ampliar VPS o migrar clientes
+3. **Migrar un cliente a otro VPS**:
+   - Copiar carpeta `cliente-{slug}/` al nuevo VPS
+   - Actualizar DNS del subdominio
+   - Levantar con `docker compose up -d`
+   - Eliminar del VPS anterior
+
+### Agregar un nuevo cliente (multi-cliente)
+
+Ver `docs/PLAN_MULTI_CLIENTE.md` para el proceso completo.
+
+Resumen rápido:
+1. Elegir subdominio: `{slug}.asistentebot.com.ar`
+2. Crear carpeta `/mnt/data/cliente-{slug}/`
+3. Copiar template (app/, ui/, docker-compose.yml)
+4. Generar `.env` con `BOT_NAME`, `COLLECTION_NAME`, `CONTACT_PHONE`, etc.
+5. Agregar bloque al Caddyfile de aibrain
+6. Levantar contenedores
+
+---
+
 ## Checklist post-deploy
 
 - [ ] Registro A de `bot` en Cloudflare apunta a `167.114.96.29`
@@ -256,4 +295,4 @@ boston-ai_default (bridge network)
 
 ---
 
-*Ultima actualizacion: 2026-05-26*
+*Ultima actualizacion: 2026-05-28*

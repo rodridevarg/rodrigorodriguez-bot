@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Secretaria Virtual</title>
+    <title id="adminTitle">Panel Admin - Asistente Virtual</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -240,7 +240,7 @@
     </div>
 
     <div class="header">
-        <h1>Secretaria Virtual - Panel Admin</h1>
+        <h1 id="adminHeader">Panel Admin - Asistente Virtual</h1>
         <span class="status" id="connStatus">Conectando...</span>
     </div>
 
@@ -266,7 +266,7 @@
 
     <script>
         const API_BASE = window.location.origin;
-        let adminKey = localStorage.getItem('rrbot_admin_key') || '';
+        let adminKey = localStorage.getItem('bot_admin_key') || '';
         let conversations = [];
         let selectedPhone = null;
         let refreshInterval = null;
@@ -318,7 +318,7 @@
         function saveApiKey() {
             const key = document.getElementById('apiKeyInput').value.trim();
             if (!key) return alert('Ingresa la API key');
-            localStorage.setItem('rrbot_admin_key', key);
+            localStorage.setItem('bot_admin_key', key);
             adminKey = key;
             document.getElementById('loginOverlay').classList.add('hidden');
             init();
@@ -344,7 +344,7 @@
             const res = await fetch(`${API_BASE}${path}`, opts);
             if (res.status === 401) {
                 alert('API Key invalida. Recargando...');
-                localStorage.removeItem('rrbot_admin_key');
+                localStorage.removeItem('bot_admin_key');
                 location.reload();
                 return null;
             }
@@ -354,6 +354,21 @@
             }
             return res.json();
         }
+
+        async function loadAdminConfig() {
+            try {
+                const res = await fetch('/config');
+                if (!res.ok) return;
+                const cfg = await res.json();
+                if (cfg.bot_name) {
+                    document.getElementById('adminTitle').textContent = 'Panel Admin - ' + cfg.bot_name;
+                    document.getElementById('adminHeader').textContent = cfg.bot_name + ' - Panel Admin';
+                }
+            } catch (e) {
+                console.error('Error cargando config:', e);
+            }
+        }
+        loadAdminConfig();
 
         async function loadConversations() {
             try {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secretaria Virtual - Rodrigo Rodriguez</title>
+  <title id="pageTitle">Asistente Virtual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -334,10 +334,10 @@
 <body>
   <header>
     <div class="logo-container">
-      <div class="logo">RR</div>
+      <div class="logo" id="logoText">AV</div>
       <div>
-        <h1>Secretaria Virtual</h1>
-        <p>Consulta sobre automatizacion para tu negocio</p>
+        <h1 id="botName">Asistente Virtual</h1>
+        <p id="botDescription">Consulta sobre nuestros servicios</p>
       </div>
     </div>
   </header>
@@ -369,10 +369,30 @@
   </main>
 
   <footer>
-    <a href="https://rodrigorodriguez.com.ar" target="_blank" rel="noopener">Rodrigo Rodriguez</a> &middot; Secretaria Virtual &middot; Hecho con 💚 en Argentina
+    <span id="footerBrand">Asistente Virtual</span> &middot; Hecho con 💚
   </footer>
 
   <script>
+    async function loadConfig() {
+      try {
+        const res = await fetch('/config');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg.bot_name) {
+          document.getElementById('pageTitle').textContent = cfg.bot_name;
+          document.getElementById('botName').textContent = cfg.bot_name;
+          document.getElementById('logoText').textContent = cfg.bot_name.substring(0, 2).toUpperCase();
+          document.getElementById('footerBrand').textContent = cfg.bot_name;
+        }
+        if (cfg.bot_description) {
+          document.getElementById('botDescription').textContent = cfg.bot_description;
+        }
+      } catch (e) {
+        console.error('Error cargando config:', e);
+      }
+    }
+    loadConfig();
+
     const chatContainer = document.getElementById('chatContainer');
     const emptyState = document.getElementById('emptyState');
     const questionInput = document.getElementById('questionInput');

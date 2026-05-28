@@ -6,6 +6,7 @@ sys.path.insert(0, str(current_dir.parent))
 
 from app.documents import load_documents
 from app.vector_store import add_documents, clear_collection
+from app.config import COLLECTION_NAME
 
 
 def main():
@@ -13,16 +14,16 @@ def main():
     print("INDEXANDO DOCUMENTOS EN CHROMADB")
     print("=" * 60)
     print()
-    
+
     print("[1/4] Cargando documentos...")
     docs = load_documents()
     print(f"   {len(docs)} documentos encontrados.")
     print()
-    
+
     print("[2/4] Limpiando coleccion anterior...")
-    clear_collection("rodrigo_docs")
+    clear_collection(COLLECTION_NAME)
     print()
-    
+
     print("[3/4] Preparando documentos...")
     chroma_docs = []
     for doc in docs:
@@ -36,11 +37,11 @@ def main():
         })
         print(f"   - {doc['id']}: {len(doc['content'])} caracteres")
     print()
-    
+
     print("[4/4] Indexando en ChromaDB (esto genera embeddings)...")
-    add_documents(chroma_docs, collection_name="rodrigo_docs")
+    add_documents(chroma_docs, collection_name=COLLECTION_NAME)
     print()
-    
+
     print("=" * 60)
     print("INDEXACION COMPLETA")
     print("=" * 60)

@@ -1,7 +1,7 @@
 import time
 import signal
 import sys
-from app.config import DEBUG
+from app.config import DEBUG, BOT_NAME
 from app.db import init_db
 from app.db_migrations import apply_migrations
 from app.whatsapp_store import store
@@ -26,7 +26,7 @@ class Worker:
         self.running = False
 
     def run(self):
-        print("[WORKER] Iniciando worker de Rodrigo Rodriguez - Secretaria Virtual")
+        print(f"[WORKER] Iniciando worker de {BOT_NAME}")
         print(f"[WORKER] Intervalo de polling: {POLL_INTERVAL_SECONDS}s")
 
         init_db()
