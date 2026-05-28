@@ -32,11 +32,73 @@ else
     echo "   [INFO] .env ya existe. No se sobreescribio."
 fi
 
-# 4. Levantar router
-echo "[4/4] Levantando contenedores..."
+# 4. Agregar bloque a Caddyfile
+echo "[4/5] Configurando Caddyfile..."
+CADDYFILE="/mnt/data/boston-ai/Caddyfile"
+if [[ -f "$CADDYFILE" ]]; then
+    if ! grep -q "asistentebot.com.ar" "$CADDYFILE"; then
+        cat >> "$CADDYFILE" <<EOF
+
+# asistentebot.com.ar (webhook router)
+asistentebot.com.ar {
+    handle /webhook* {
+        reverse_proxy webhook-router:8100
+    }
+    handle {
+        respond "Asistente Bot - Multi-Cliente WhatsApp"
+    }
+    log {
+        output file /data/caddy/access-router.log
+    }
+}
+EOF
+        echo "   [OK] Bloque agregado a Caddyfile."
+    else
+        echo "   [INFO] Bloque de asistentebot.com.ar ya existe en Caddyfile."
+    fi
+else
+    echo "   [WARN] Caddyfile no encontrado en ${CADDYFILE}. Agregar manualmente:"
+    cat <<EOF
+asistentebot.com.ar {
+    handle /webhook* {
+        reverse_proxy webhook-router:8100
+    }
+    handle {
+        respond "Asistente Bot - Multi-Cliente WhatsApp"
+    }
+}
+EOF
+fi
+
+# 5. Levantar router
+echo "[5/5] Levantando contenedores..."
 cd "$ROUTER_DIR"
 docker compose up -d --build
 
+# Recargar Caddy
+echo ""
+echo "Recargando Caddy..."
+cd /mnt/data/boston-ai && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile 2>/dev/null || echo "[WARN] No se pudo recargar Caddy automaticamente."
+
+echo ""
+echo "========================================"
+echo "  ROUTER CONFIGURADO Y LISTO"
+echo "========================================"
+echo ""
+echo "  Directorio: ${ROUTER_DIR}"
+echo "  Health:     http://127.0.0.1:8100/health"
+echo "  Webhook:    https://asistentebot.com.ar/webhook"
+echo ""
+echo "  Proximos pasos:"
+echo "  1. Editar ${ROUTER_DIR}/.env con valores reales de Meta"
+echo "  2. Reiniciar router: cd ${ROUTER_DIR} && docker compose restart"
+echo "  3. Configurar Meta: webhook URL = https://asistentebot.com.ar/webhook"
+echo "  4. Actualizar bot de Rodrigo: poner META_VALIDATE_SIGNATURE=false en su .env"
+echo "  5. Registrar bot existente (Rodrigo) en el router"
+echo "  6. Probar: curl https://asistentebot.com.ar/webhook (debe dar 401/403, no 404)"
+echo ""
+echo "  Para crear un cliente nuevo:"
+echo "    ./scripts/new_client.sh --name 'Nombre' --slug slug --domain dominio.asistentebot.com.ar --phone '+54...' --meta-phone-number-id ID_META"
 echo ""
 echo "========================================"
 echo "  ROUTER CONFIGURADO"
