@@ -273,7 +273,7 @@ Cada instancia del bot consume aproximadamente:
 Ver `docs/PLAN_MULTI_CLIENTE.md` para el proceso completo.
 
 Resumen rápido:
-1. Elegir subdominio: `{slug}.tudominio.com`
+1. Elegir subdominio: `{slug}.asistentebot.com.ar`
 2. Crear carpeta `/mnt/data/cliente-{slug}/`
 3. Copiar template (app/, ui/, docker-compose.yml)
 4. Generar `.env` con `BOT_NAME`, `COLLECTION_NAME`, `CONTACT_PHONE`, etc.

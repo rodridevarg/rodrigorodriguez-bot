@@ -67,7 +67,7 @@ Convertir el bot actual de Rodrigo Rodríguez en una **plataforma replicable** p
 
 | Tarea | Descripción | Entregable |
 |-------|-------------|------------|
-| **0.1 Dominio genérico** | Comprar dominio para subdominios (ej. `asistenteaibot.com.ar`) | Dominio activo en Cloudflare |
+| **0.1 Dominio genérico** | Comprar dominio para subdominios (`asistentebot.com.ar`) | Dominio activo en Cloudflare |
 | **0.2 DNS Wildcard** | Configurar `*.tudominio.com` → IP del VPS | Subdominios funcionan automáticamente |
 | **0.3 Evaluar VPS** | Revisar disco, RAM, CPU actuales | Saber cuántos clientes caben hoy |
 | **0.4 Plan de escalado** | Definir cuándo migrar a VPS más grande o múltiples VPS | Documento de escalabilidad |
@@ -103,7 +103,7 @@ Crea un nuevo cliente desde cero.
 ./scripts/new_client.sh \
   --name "Dr. García" \
   --slug "medico" \
-  --domain "garcia.asistenteaibot.com" \
+  --domain "garcia.asistentebot.com.ar" \
   --port 8002 \
   --phone "+54 11 1234-5678"
 ```

@@ -20,7 +20,7 @@
 ## Cliente no responde
 
 ### Sintoma
-`curl https://dominio.com/health` devuelve error o timeout.
+`curl https://{dominio}/health` devuelve error o timeout.
 
 ### Diagnostico
 
@@ -57,7 +57,7 @@ El dominio da "404" o "502 Bad Gateway".
 
 ```bash
 # Verificar que el bloque existe
-cat /mnt/data/boston-ai/Caddyfile | grep -A 5 "dominio.com"
+cat /mnt/data/boston-ai/Caddyfile | grep -A 5 "{dominio}"
 
 # Verificar que el contenedor esta en la red
 docker network inspect boston-ai_default | grep "{slug}-web"
@@ -75,14 +75,14 @@ docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
 # 2. Si el bloque falta, agregar manualmente:
 cat >> /mnt/data/boston-ai/Caddyfile <<EOF
-dominio.com {
+{dominio} {
     reverse_proxy {slug}-web:8000
 }
 EOF
 docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
 # 3. Verificar DNS
-nslookup dominio.com
+nslookup {dominio}
 ```
 
 ---
@@ -158,7 +158,7 @@ for p in pending:
 ## Panel admin no carga
 
 ### Sintoma
-`https://dominio.com/admin` no carga o pide API key y no acepta.
+`https://{dominio}/admin` no carga o pide API key y no acepta.
 
 ### Diagnostico
 
@@ -167,7 +167,7 @@ for p in pending:
 grep ADMIN_API_KEY /mnt/data/cliente-{slug}/.env
 
 # 2. Probar el endpoint directamente
-curl -H "X-Admin-Key: TU_KEY" https://dominio.com/admin/conversations
+curl -H "X-Admin-Key: TU_KEY" https://{dominio}/admin/conversations
 ```
 
 ### Soluciones
