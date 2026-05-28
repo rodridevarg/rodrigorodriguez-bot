@@ -23,6 +23,17 @@ LLM_MODEL = os.getenv("LLM_MODEL")
 TOP_K = int(os.getenv("TOP_K", "3"))
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
+BOT_NAME = os.getenv("BOT_NAME", "Asistente Virtual")
+BOT_DESCRIPTION = os.getenv("BOT_DESCRIPTION", "Asistente automatizado por WhatsApp")
+CONTACT_PHONE = os.getenv("CONTACT_PHONE", "")
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
+FALLBACK_MESSAGE = os.getenv(
+    "FALLBACK_MESSAGE",
+    "No encontré información sobre eso en mi base de conocimiento. Te sugiero contactar para más detalles.",
+)
+SYSTEM_PROMPT_PATH = _env_path("SYSTEM_PROMPT_PATH", DATA_DIR / "system_prompt.txt")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "bot_docs")
+
 WHATSAPP_MODE = os.getenv("WHATSAPP_MODE", "fake")
 META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 META_PHONE_NUMBER_ID = os.getenv("META_PHONE_NUMBER_ID")
@@ -47,6 +58,25 @@ HANDOFF_TRANSITION_MESSAGE = os.getenv(
 
 CONVERSATION_MEMORY_MAX_TURNS = int(os.getenv("CONVERSATION_MEMORY_MAX_TURNS", "20"))
 CONVERSATION_ACTIVE_CONTEXT_TURNS = int(os.getenv("CONVERSATION_ACTIVE_CONTEXT_TURNS", "8"))
+
+
+def load_system_prompt() -> str:
+    default = (
+        "Sos un asistente virtual. Ayudás a responder consultas de clientes.\n\n"
+        "Respondé usando ÚNICAMENTE la información proporcionada en el contexto.\n"
+        "Si no encontrás la respuesta en el contexto, decí claramente que no lo sabés.\n"
+        "Sé cercano, profesional y entusiasta. Respondé en español. "
+        "No inventes precios ni promesas que no estén en el contexto."
+    )
+    try:
+        if SYSTEM_PROMPT_PATH.exists():
+            return SYSTEM_PROMPT_PATH.read_text(encoding="utf-8").strip()
+    except Exception:
+        pass
+    return default
+
+
+SYSTEM_PROMPT = load_system_prompt()
 
 
 def validate_runtime_config():

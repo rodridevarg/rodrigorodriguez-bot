@@ -1,6 +1,6 @@
 import chromadb
 from chromadb.config import Settings
-from app.config import CHROMA_DIR
+from app.config import CHROMA_DIR, COLLECTION_NAME
 
 _client = None
 
@@ -16,18 +16,18 @@ def get_client():
     return _client
 
 
-def get_collection(name: str = "rodrigo_docs"):
+def get_collection(name: str = None):
     client = get_client()
-    return client.get_or_create_collection(name=name)
+    return client.get_or_create_collection(name=name or COLLECTION_NAME)
 
 
-def add_documents(documents: list, collection_name: str = "rodrigo_docs"):
+def add_documents(documents: list, collection_name: str = None):
     collection = get_collection(collection_name)
-    
+
     ids = [doc["id"] for doc in documents]
     texts = [doc["text"] for doc in documents]
     metadatas = [doc.get("metadata", {}) for doc in documents]
-    
+
     collection.add(
         ids=ids,
         documents=texts,
@@ -36,14 +36,14 @@ def add_documents(documents: list, collection_name: str = "rodrigo_docs"):
     print(f"[OK] {len(documents)} documentos agregados a ChromaDB.")
 
 
-def query(text: str, n_results: int = 3, collection_name: str = "rodrigo_docs"):
+def query(text: str, n_results: int = 3, collection_name: str = None):
     collection = get_collection(collection_name)
-    
+
     results = collection.query(
         query_texts=[text],
         n_results=n_results,
     )
-    
+
     documents = []
     for i in range(len(results["ids"][0])):
         documents.append({
@@ -52,14 +52,15 @@ def query(text: str, n_results: int = 3, collection_name: str = "rodrigo_docs"):
             "metadata": results["metadatas"][0][i],
             "distance": results["distances"][0][i],
         })
-    
+
     return documents
 
 
-def clear_collection(collection_name: str = "rodrigo_docs"):
+def clear_collection(collection_name: str = None):
     client = get_client()
+    target = collection_name or COLLECTION_NAME
     try:
-        client.delete_collection(name=collection_name)
-        print(f"[OK] Coleccion '{collection_name}' eliminada.")
+        client.delete_collection(name=target)
+        print(f"[OK] Coleccion '{target}' eliminada.")
     except Exception:
-        print(f"[INFO] La coleccion '{collection_name}' no existia.")
+        print(f"[INFO] La coleccion '{target}' no existia.")

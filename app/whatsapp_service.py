@@ -1,6 +1,11 @@
 import traceback
 from typing import Dict, Optional
-from app.config import CONVERSATION_MEMORY_MAX_TURNS, HANDOFF_TRANSITION_MESSAGE
+from app.config import (
+    CONVERSATION_MEMORY_MAX_TURNS,
+    HANDOFF_TRANSITION_MESSAGE,
+    CONTACT_PHONE,
+    FALLBACK_MESSAGE,
+)
 from app.rag_service import answer_question
 from app.whatsapp_models import InboundTextMessage
 from app.whatsapp_store import store
@@ -96,10 +101,9 @@ class WhatsAppService:
         answer = result["answer"]
 
         if not result["sources"]:
-            answer = (
-                "No encontré esa información con seguridad. "
-                "Escribime por WhatsApp y te ayudo: +54 9 2477 614405"
-            )
+            answer = FALLBACK_MESSAGE
+            if CONTACT_PHONE:
+                answer += f" WhatsApp: {CONTACT_PHONE}"
 
         msg_id = self._send_outbound(
             inbound_id=inbound["id"],
