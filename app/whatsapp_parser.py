@@ -16,19 +16,27 @@ def parse_webhook_get(params: Dict[str, Any]) -> Optional[Dict[str, str]]:
     return None
 
 
-def parse_webhook_post(payload: Dict[str, Any]) -> Dict[str, List[Any]]:
+def _extract_phone_number_id(value: Dict[str, Any]) -> str:
+    metadata = value.get("metadata", {})
+    if isinstance(metadata, dict):
+        return metadata.get("phone_number_id", "")
+    return ""
+
+
+def parse_webhook_post(payload: Dict[str, Any]) -> Dict[str, Any]:
     messages: List[InboundTextMessage] = []
     statuses: List[StatusEvent] = []
+    phone_number_id = ""
 
     if not isinstance(payload, dict):
-        return {"messages": messages, "statuses": statuses}
+        return {"messages": messages, "statuses": statuses, "phone_number_id": phone_number_id}
 
     if payload.get("object") != "whatsapp_business_account":
-        return {"messages": messages, "statuses": statuses}
+        return {"messages": messages, "statuses": statuses, "phone_number_id": phone_number_id}
 
     entries = payload.get("entry", [])
     if not isinstance(entries, list):
-        return {"messages": messages, "statuses": statuses}
+        return {"messages": messages, "statuses": statuses, "phone_number_id": phone_number_id}
 
     for entry in entries:
         changes = entry.get("changes", [])
@@ -39,6 +47,9 @@ def parse_webhook_post(payload: Dict[str, Any]) -> Dict[str, List[Any]]:
             value = change.get("value", {})
             if not isinstance(value, dict):
                 continue
+
+            if not phone_number_id:
+                phone_number_id = _extract_phone_number_id(value)
 
             raw_messages = value.get("messages", [])
             if isinstance(raw_messages, list):
@@ -54,7 +65,7 @@ def parse_webhook_post(payload: Dict[str, Any]) -> Dict[str, List[Any]]:
                     if parsed:
                         statuses.append(parsed)
 
-    return {"messages": messages, "statuses": statuses}
+    return {"messages": messages, "statuses": statuses, "phone_number_id": phone_number_id}
 
 
 def _parse_inbound_message(msg: Dict[str, Any]) -> Optional[InboundTextMessage]:

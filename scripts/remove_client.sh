@@ -65,23 +65,47 @@ if [[ "$CONFIRM" == false ]]; then
 fi
 
 # ============================
-# 2. Detener y eliminar contenedores + volumen
+# 2. Desregistrar de webhook-router
 # ============================
-echo "[1/5] Deteniendo contenedores y eliminando volumen..."
+echo "[1/5] Desregistrando de webhook-router..."
+META_PHONE_NUMBER_ID=""
+if [[ -f "${CLIENT_DIR}/.env" ]]; then
+    META_PHONE_NUMBER_ID=$(grep "^META_PHONE_NUMBER_ID=" "${CLIENT_DIR}/.env" | cut -d= -f2- | tr -d '"' || true)
+fi
+
+ROUTER_ADMIN_KEY=""
+if [[ -f "/mnt/data/webhook-router/.env" ]]; then
+    ROUTER_ADMIN_KEY=$(grep "^ADMIN_API_KEY=" /mnt/data/webhook-router/.env | cut -d= -f2- | tr -d '"' || true)
+fi
+
+if [[ -n "$ROUTER_ADMIN_KEY" && -n "$META_PHONE_NUMBER_ID" ]]; then
+    curl -s -X POST http://webhook-router:8100/admin/unregister \
+        -H "Content-Type: application/json" \
+        -H "X-Admin-Key: ${ROUTER_ADMIN_KEY}" \
+        -d "{\"phone_number_id\":\"${META_PHONE_NUMBER_ID}\"}" \
+        >/dev/null && echo "   [OK] Desregistrado del webhook-router." || echo "   [WARN] No se pudo desregistrar del webhook-router."
+else
+    echo "   [INFO] Router no configurado o sin PHONE_NUMBER_ID. Omitiendo desregistro."
+fi
+
+# ============================
+# 3. Detener y eliminar contenedores + volumen
+# ============================
+echo "[2/5] Deteniendo contenedores y eliminando volumen..."
 cd "$CLIENT_DIR"
 docker compose down -v 2>/dev/null || true
 
 # ============================
-# 3. Eliminar directorio
+# 4. Eliminar directorio
 # ============================
-echo "[2/5] Eliminando directorio..."
+echo "[3/5] Eliminando directorio..."
 rm -rf "$CLIENT_DIR"
 echo "   [OK] ${CLIENT_DIR} eliminado."
 
 # ============================
-# 4. Limpiar Caddyfile
+# 5. Limpiar Caddyfile
 # ============================
-echo "[3/5] Limpiando Caddyfile..."
+echo "[4/5] Limpiando Caddyfile..."
 if [[ -f "$CADDYFILE" ]]; then
     # Crear backup del Caddyfile
     cp "$CADDYFILE" "${CADDYFILE}.backup-$(date +%Y%m%d-%H%M%S)"
@@ -106,13 +130,13 @@ else
 fi
 
 # ============================
-# 5. Recargar Caddy
+# 6. Recargar Caddy
 # ============================
-echo "[4/5] Recargando Caddy..."
+echo "[5/5] Recargando Caddy..."
 cd /mnt/data/boston-ai && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile 2>/dev/null || echo "   [WARN] No se pudo recargar Caddy automaticamente."
 
 # ============================
-# 6. Resumen
+# 7. Resumen
 # ============================
 echo ""
 echo "========================================"

@@ -308,6 +308,25 @@ cd "$CLIENT_DIR"
 docker compose up -d --build
 
 # ============================
+# 5b. Registrar en webhook-router
+# ============================
+echo "[5b/10] Registrando en webhook-router..."
+ROUTER_ADMIN_KEY=""
+if [[ -f "/mnt/data/webhook-router/.env" ]]; then
+    ROUTER_ADMIN_KEY=$(grep "^ADMIN_API_KEY=" /mnt/data/webhook-router/.env | cut -d= -f2- | tr -d '"' || true)
+fi
+
+if [[ -n "$ROUTER_ADMIN_KEY" && -n "$META_PHONE_NUMBER_ID" ]]; then
+    curl -s -X POST http://webhook-router:8100/admin/register \
+        -H "Content-Type: application/json" \
+        -H "X-Admin-Key: ${ROUTER_ADMIN_KEY}" \
+        -d "{\"phone_number_id\":\"${META_PHONE_NUMBER_ID}\",\"client_slug\":\"${CLIENT_SLUG}\",\"target_url\":\"http://${CLIENT_SLUG}-web:8000/webhook\"}" \
+        >/dev/null && echo "   [OK] Registrado en webhook-router." || echo "   [WARN] No se pudo registrar en webhook-router. Hacerlo manualmente."
+else
+    echo "   [INFO] Router no configurado o sin PHONE_NUMBER_ID. Omitiendo registro."
+fi
+
+# ============================
 # 6. Indexar documentos vacios
 # ============================
 echo "[6/10] Indexando documentos iniciales..."
