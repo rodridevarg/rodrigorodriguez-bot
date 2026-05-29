@@ -177,6 +177,16 @@ cd /mnt/data/boston-ai && docker compose restart
 - **Coleccion por defecto**: rodrigo_docs (backwards compat)
 - **WhatsApp mode**: meta (produccion)
 - **Webhook mode**: async (worker procesa)
+- **Meta App**: Solo UNA App en Meta (la de Rodrigo). Ambos numeros estan en la misma WABA.
+- **Token de verificacion**: rodrigo_webhook_verify_2024 (el mismo para ambos bots)
+
+## Notas operativas importantes
+
+1. **Cambiar .env no basta**: Si se modifica META_VALIDATE_SIGNATURE (o cualquier variable) en el .env, hay que hacer `docker compose down && docker compose up -d` para que el contenedor la lea. `docker compose restart` NO funciona.
+
+2. **Deploys**: El VPS no tiene git. Usar `scp -r webhook-router root@vps:/mnt/data/` o tarball para actualizar codigo.
+
+3. **Espacio en disco**: El disco raiz (/) esta al 100%. Si hay problemas de build, limpiar cache: `docker system prune -f`
 
 ---
 
