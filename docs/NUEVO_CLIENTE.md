@@ -102,9 +102,9 @@ docker compose exec web python scripts/index_documents.py
 nano /mnt/data/cliente-garcia/data/system_prompt.txt
 ```
 
-Reiniciar para aplicar:
+Reiniciar para aplicar (down+up para leer .env modificado):
 ```bash
-cd /mnt/data/cliente-garcia && docker compose restart
+cd /mnt/data/cliente-garcia && docker compose down && docker compose up -d
 ```
 
 ---

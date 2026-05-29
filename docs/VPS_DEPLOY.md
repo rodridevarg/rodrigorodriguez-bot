@@ -153,8 +153,8 @@ docker compose logs -f worker
 # Ver logs en tiempo real
 docker compose logs -f
 
-# Reiniciar servicios
-docker compose restart
+# Reiniciar servicios (down+up para leer .env modificado)
+docker compose down && docker compose up -d
 
 # Entrar al contenedor web
 docker compose exec web bash

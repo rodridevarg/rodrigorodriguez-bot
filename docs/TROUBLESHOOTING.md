@@ -42,7 +42,7 @@ docker compose exec web python -c "import urllib.request; print(urllib.request.u
 | Causa | Solucion |
 |-------|----------|
 | Contenedores detenidos | `docker compose up -d` |
-| Error en `.env` (falta variable) | Revisar logs, completar `.env`, `docker compose restart` |
+| Error en `.env` (falta variable) | Revisar logs, completar `.env`, `docker compose down && docker compose up -d` |
 | Puerto en conflicto | Cambiar puerto en `docker-compose.yml` (raro con multi-cliente) |
 | Caddy no redirige | Verificar que el dominio este en Caddyfile, recargar Caddy |
 
@@ -151,7 +151,7 @@ for p in pending:
 | Worker detenido | `docker compose up -d worker` |
 | Error en procesamiento | Revisar logs del worker, corregir error, reiniciar |
 | `WEBHOOK_MODE=inline` | En modo inline no se usa worker (procesa el web directamente) |
-| Base de datos bloqueada | `docker compose restart` |
+| Base de datos bloqueada | `docker compose down && docker compose up -d` |
 
 ---
 

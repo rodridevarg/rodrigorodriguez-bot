@@ -161,10 +161,10 @@ cd /mnt/data/boston-ai && docker compose logs -f
 # Recargar Caddy
 cd /mnt/data/boston-ai && docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
-# Reiniciar todo
-cd /mnt/data/webhook-router && docker compose restart
-cd /mnt/data/rodrigo-bot && docker compose restart
-cd /mnt/data/boston-ai && docker compose restart
+# Reiniciar todo (down+up para leer .env modificado)
+cd /mnt/data/webhook-router && docker compose down && docker compose up -d
+cd /mnt/data/rodrigo-bot && docker compose down && docker compose up -d
+cd /mnt/data/boston-ai && docker compose down && docker compose up -d
 ```
 
 ---

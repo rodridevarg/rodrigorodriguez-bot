@@ -172,7 +172,7 @@ nano /mnt/data/cliente-medico/data/system_prompt.txt
 Despues de editar, **no hace falta reindexar**, pero **si reiniciar los contenedores** para que el cambio surta efecto:
 
 ```bash
-cd /mnt/data/cliente-medico && docker compose restart
+cd /mnt/data/cliente-medico && docker compose down && docker compose up -d
 ```
 
 ### Tips para un buen prompt
@@ -350,8 +350,8 @@ cd /mnt/data/cliente-medico && docker compose exec web bash
 # Ver base de datos SQLite
 cd /mnt/data/cliente-medico && docker compose exec web sqlite3 /app/data/app.sqlite3
 
-# Reiniciar un cliente
-cd /mnt/data/cliente-medico && docker compose restart
+# Reiniciar un cliente (down+up para leer .env modificado)
+cd /mnt/data/cliente-medico && docker compose down && docker compose up -d
 
 # Ver estado de Caddy
 cd /mnt/data/boston-ai && docker compose logs -f caddy

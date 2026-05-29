@@ -52,9 +52,9 @@ META_APP_SECRET=TU_APP_SECRET_DE_META
 ADMIN_API_KEY=$(openssl rand -hex 24)
 ```
 
-Reiniciar:
+Reiniciar (down+up para leer .env modificado):
 ```bash
-cd /mnt/data/webhook-router && docker compose restart
+cd /mnt/data/webhook-router && docker compose down && docker compose up -d
 ```
 
 ## Paso 4: Actualizar bot de Rodrigo
@@ -70,9 +70,9 @@ Agregar/modificar:
 META_VALIDATE_SIGNATURE=false
 ```
 
-Reiniciar:
+Reiniciar (down+up para leer .env modificado):
 ```bash
-cd /mnt/data/rodrigo-bot && docker compose restart
+cd /mnt/data/rodrigo-bot && docker compose down && docker compose up -d
 ```
 
 ## Paso 5: Configurar Meta Developers
@@ -155,7 +155,7 @@ cd /mnt/data/rodrigo-bot-template
 3. **Editar prompt si es necesario**
    ```bash
    nano /mnt/data/cliente-garcia/data/system_prompt.txt
-   cd /mnt/data/cliente-garcia && docker compose restart
+   cd /mnt/data/cliente-garcia && docker compose down && docker compose up -d
    ```
 
 4. **Probar**

@@ -121,6 +121,7 @@ fi
 echo ""
 echo "  Comandos utiles:"
 echo "    Logs:     docker compose -f ${CLIENT_DIR}/docker-compose.yml logs -f"
-echo "    Restart:  docker compose -f ${CLIENT_DIR}/docker-compose.yml restart"
+echo "    Restart:  docker compose -f ${CLIENT_DIR}/docker-compose.yml down && docker compose -f ${CLIENT_DIR}/docker-compose.yml up -d"
+echo "    NOTA: 'restart' NO lee cambios de .env. Usar down+up si se modifico .env."
 echo ""
 echo "========================================"

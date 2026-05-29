@@ -55,9 +55,9 @@ ADMIN_API_KEY=tu_clave_generada_aqui
 
 > Generar la clave con: `openssl rand -hex 24`
 
-Reiniciar despues de editar:
+Reiniciar despues de editar (down+up para leer .env modificado):
 ```bash
-cd /mnt/data/webhook-router && docker compose restart
+cd /mnt/data/webhook-router && docker compose down && docker compose up -d
 ```
 
 ## Configurar Meta Developers

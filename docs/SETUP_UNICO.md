@@ -53,9 +53,9 @@ META_APP_SECRET=TU_APP_SECRET_DE_META
 ADMIN_API_KEY=$(openssl rand -hex 24)
 ```
 
-Reiniciar:
+Reiniciar (down+up para que lea el .env modificado):
 ```bash
-cd /mnt/data/webhook-router && docker compose restart
+cd /mnt/data/webhook-router && docker compose down && docker compose up -d
 ```
 
 ## Paso 4: Migrar bot de Rodrigo al router
@@ -74,8 +74,8 @@ META_VALIDATE_SIGNATURE=false
 ```
 
 ```bash
-# 2. Reiniciar Rodrigo
-cd /mnt/data/rodrigo-bot && docker compose restart
+# 2. Reiniciar Rodrigo (down+up para leer .env modificado)
+cd /mnt/data/rodrigo-bot && docker compose down && docker compose up -d
 
 # 3. Registrar en el router
 ROUTER_KEY=$(grep ADMIN_API_KEY /mnt/data/webhook-router/.env | cut -d= -f2 | tr -d '"')
