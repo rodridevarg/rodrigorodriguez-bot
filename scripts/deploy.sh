@@ -1,15 +1,14 @@
 #!/bin/bash
 set -e
 
-# Rodrigo Rodriguez Bot - Deploy rapido
+# Bot Template - Deploy rapido
 # Uso: ./scripts/deploy.sh
-# Solo toca rodrigo-bot. No modifica aibrain ni Caddy.
+# Solo toca el bot especifico. No modifica aibrain ni Caddy.
 
 PROJECT_DIR="/mnt/data/rodrigo-bot"
 
 echo "========================================"
-echo "  Deploy - Secretaria Virtual"
-echo "  Rodrigo Rodriguez"
+echo "  Deploy - Asistente Virtual"
 echo "========================================"
 
 # Verificar directorio
@@ -37,5 +36,5 @@ echo ""
 echo "========================================"
 echo "  Deploy completado!"
 echo "========================================"
-echo "  URL:    https://bot.rodrigorodriguez.com.ar"
+echo "  URL:    https://rodrigo.asistentebot.com.ar"
 echo "========================================"

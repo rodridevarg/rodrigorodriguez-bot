@@ -11,7 +11,7 @@
 
 | Paso | Estado | Detalle |
 |------|--------|---------|
-| Bot deployado en VPS | ✅ | `https://bot.rodrigorodriguez.com.ar` |
+| Bot deployado en VPS | ✅ | `https://rodrigo.asistentebot.com.ar` |
 | Chat web funcionando | ✅ | Responde preguntas con RAG |
 | App creada en Meta Developers | ✅ | Nombre: (completar) |
 | WABA ID obtenido | ✅ | `947623021605631` |
@@ -46,7 +46,7 @@ Ir a Meta Developers > Tu App:
 
 Ir a WhatsApp > Configuracion > Webhook:
 
-- **URL de devolucion de llamada**: `https://bot.rodrigorodriguez.com.ar/webhook`
+- **URL de devolucion de llamada**: `https://asistentebot.com.ar/webhook` (ruta central del router)
 - **Token de verificacion**: `rodrigo_webhook_verify_2024`
 - Click en **Verificar y guardar**
 
@@ -77,7 +77,7 @@ META_APP_SECRET=a1b2c3... (app secret real)
 META_VERIFY_TOKEN=rodrigo_webhook_verify_2024
 META_GRAPH_VERSION=v23.0
 META_VALIDATE_SIGNATURE=true
-PUBLIC_WEBHOOK_URL=https://bot.rodrigorodriguez.com.ar
+PUBLIC_WEBHOOK_URL=https://rodrigo.asistentebot.com.ar
 WEBHOOK_MODE=async
 ```
 
@@ -115,9 +115,9 @@ Deberia aparecer:
 ## 🆘 Troubleshooting
 
 ### "No se pudo verificar la URL del webhook"
-- Verificar que el bot este online: `curl https://bot.rodrigorodriguez.com.ar/health`
+- Verificar que el bot este online: `curl https://rodrigo.asistentebot.com.ar/health`
 - Verificar que `META_VERIFY_TOKEN` en `.env` sea EXACTAMENTE igual al de Meta
-- Probar: `curl -v "https://bot.rodrigorodriguez.com.ar/webhook?hub.mode=subscribe&hub.verify_token=rodrigo_webhook_verify_2024&hub.challenge=test123"`
+- Probar: `curl -v "https://asistentebot.com.ar/webhook?hub.mode=subscribe&hub.verify_token=rodrigo_webhook_verify_2024&hub.challenge=test123"`
 
 ### "Token invalido" o "Error al enviar"
 - El token temporal caduco. Generar nuevo en Meta Developers.

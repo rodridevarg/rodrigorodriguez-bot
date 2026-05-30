@@ -1,9 +1,11 @@
 #!/bin/bash
 set -e
 
-# Rodrigo Rodriguez Bot - Setup inicial en VPS
+# Bot Template - Setup inicial en VPS
 # Uso: Ejecutar UNA SOLA VEZ. Se auto-elimina al finalizar.
 # IMPORTANTE: Verificar que aibrain este funcionando antes de ejecutar.
+# NOTA: Este script es LEGACY. La arquitectura actual usa webhook-router
+#       y subdominios de asistentebot.com.ar
 
 PROJECT_DIR="/mnt/data/rodrigo-bot"
 BOSTON_DIR="/mnt/data/boston-ai"
@@ -11,8 +13,8 @@ VPS_IP="167.114.96.29"
 THIS_SCRIPT="$0"
 
 echo "========================================"
-echo "  Setup Inicial - Secretaria Virtual"
-echo "  Rodrigo Rodriguez"
+echo "  Setup Inicial - Asistente Virtual"
+echo "  (LEGACY - usar new_client.sh para multi-cliente)"
 echo "========================================"
 echo ""
 echo "ADVERTENCIA: Este script se ejecuta UNA SOLA VEZ."
@@ -75,21 +77,21 @@ echo "   IMPORTANTE: Asegurate de tener el registro A en Cloudflare:"
 echo "   Nombre: bot"
 echo "   Valor: $VPS_IP"
 echo ""
-nslookup bot.rodrigorodriguez.com.ar || echo "   [WARN] DNS aun no propagado."
+nslookup rodrigo.asistentebot.com.ar || echo "   [WARN] DNS aun no propagado."
 
 # ========================================
 # 6. Agregar bloque de rodrigo al Caddyfile de aibrain
 # ========================================
 echo "[6/8] Configurando Caddy maestro (aibrain)..."
 cd "$BOSTON_DIR"
-if grep -q "bot.rodrigorodriguez.com.ar" Caddyfile; then
+if grep -q "rodrigo.asistentebot.com.ar" Caddyfile; then
     echo "   [INFO] Bloque de rodrigo ya existe en Caddyfile."
 else
     echo "" >> Caddyfile
     echo "# ========================================" >> Caddyfile
-    echo "# bot.rodrigorodriguez.com.ar (rodrigo-bot)" >> Caddyfile
+    echo "# rodrigo.asistentebot.com.ar (rodrigo-bot)" >> Caddyfile
     echo "# ========================================" >> Caddyfile
-    echo "bot.rodrigorodriguez.com.ar {" >> Caddyfile
+    echo "rodrigo.asistentebot.com.ar {" >> Caddyfile
     echo "    header {" >> Caddyfile
     echo "        X-Content-Type-Options nosniff" >> Caddyfile
     echo "        X-Frame-Options DENY" >> Caddyfile
@@ -154,9 +156,9 @@ echo ""
 echo "========================================"
 echo "  Setup completado!"
 echo "========================================"
-echo "  URL:     https://bot.rodrigorodriguez.com.ar"
-echo "  Health:  https://bot.rodrigorodriguez.com.ar/health"
-echo "  Chat:    https://bot.rodrigorodriguez.com.ar/chat"
+echo "  URL:     https://rodrigo.asistentebot.com.ar"
+echo "  Health:  https://rodrigo.asistentebot.com.ar/health"
+echo "  Chat:    https://rodrigo.asistentebot.com.ar/chat"
 echo "========================================"
 echo ""
 

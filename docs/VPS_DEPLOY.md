@@ -1,7 +1,7 @@
-# Guia de Deploy en VPS - Secretaria Virtual (Rodrigo Rodriguez)
+# Guia de Deploy en VPS - AsistenteBot Multi-Cliente
 
-> Bot comparte VPS con Boston AI (aibrain) en el mismo servidor.
-> Caddy maestro esta en aibrain. Rodrigo-bot usa reverse proxy via Docker network compartida.
+> Plataforma de bots de WhatsApp basados en RAG.
+> Comparte VPS con Boston AI (aibrain). Caddy maestro gestiona HTTPS para todos los bots.
 
 ---
 
@@ -10,7 +10,7 @@
 - VPS ya configurado (compartido con aibrain)
 - IP: `167.114.96.29`
 - Docker y Docker Compose instalados
-- Dominio `bot.rodrigorodriguez.com.ar` apuntando al VPS (DNS tipo A, proxy gris)
+- Dominio `*.asistentebot.com.ar` apuntando al VPS (DNS wildcard, proxy gris)
 
 ---
 
@@ -72,13 +72,13 @@ META_APP_SECRET=tu_app_secret
 META_VERIFY_TOKEN=rodrigo_webhook_verify_2024
 META_GRAPH_VERSION=v23.0
 META_VALIDATE_SIGNATURE=true
-PUBLIC_WEBHOOK_URL=https://bot.rodrigorodriguez.com.ar
+PUBLIC_WEBHOOK_URL=https://rodrigo.asistentebot.com.ar
 
 # Webhook (async recomendado para produccion)
 WEBHOOK_MODE=async
 
 # Dominio
-DOMAIN=bot.rodrigorodriguez.com.ar
+DOMAIN=rodrigo.asistentebot.com.ar
 
 # API REST
 ASK_API_KEY=tu_clave_secreta_para_api
@@ -131,10 +131,10 @@ Este script solo toca rodrigo-bot. **No modifica aibrain ni el Caddy maestro.**
 
 ```bash
 # Health check
-curl https://bot.rodrigorodriguez.com.ar/health
+curl https://rodrigo.asistentebot.com.ar/health
 
 # Probar chat via API
-curl -X POST https://bot.rodrigorodriguez.com.ar/ask-public \
+curl -X POST https://rodrigo.asistentebot.com.ar/ask-public \
   -H "Content-Type: application/json" \
   -d '{"question": "Que es la Secretaria Virtual?"}'
 
@@ -199,7 +199,7 @@ docker network inspect boston-ai_default
 - Verificar `WHATSAPP_MODE=meta`
 - Verificar token de Meta no caducado
 - Verificar webhook URL en Meta Dashboard:
-  `https://bot.rodrigorodriguez.com.ar/webhook`
+  `https://asistentebot.com.ar/webhook` (ruta central del webhook-router)
 - Ver logs:
   ```bash
   docker compose logs web
@@ -226,7 +226,7 @@ boston-ai_default (bridge network)
 +-- boston-caddy (172.18.0.3)
 |   Puertos: 80, 443 (del host)
 |   Reverse proxy -> boston-web:8000 (bot.bostonuniformes.com.ar)
-|   Reverse proxy -> rodrigo-web:8000 (bot.rodrigorodriguez.com.ar)
+|   Reverse proxy -> rodrigo-web:8000 (rodrigo.asistentebot.com.ar)
 |
 +-- boston-web (172.18.0.2)
 |   Puerto interno: 8000
@@ -290,8 +290,8 @@ Resumen rápido:
 - [ ] `scripts/setup_vps.sh` se auto-elimino correctamente
 - [ ] Bloque de rodrigo agregado al Caddyfile de aibrain
 - [ ] Contenedores `rodrigo-web` y `rodrigo-worker` corriendo
-- [ ] Health check responde en `https://bot.rodrigorodriguez.com.ar/health`
-- [ ] Chat web carga en `https://bot.rodrigorodriguez.com.ar/chat`
+- [ ] Health check responde en `https://rodrigo.asistentebot.com.ar/health`
+- [ ] Chat web carga en `https://rodrigo.asistentebot.com.ar/chat`
 
 ---
 

@@ -1,14 +1,24 @@
-# Rodrigo Rodriguez Bot - Secretaria Virtual
+# AsistenteBot - Plataforma Multi-Cliente WhatsApp
 
-> Bot de WhatsApp basado en RAG para emprendedores y profesionales.
+> Plataforma de bots de WhatsApp basados en RAG para emprendedores y profesionales.
 > Comparte VPS con Boston AI (aibrain) en el mismo servidor.
-> Caddy maestro gestiona HTTPS para ambos bots.
+> Caddy maestro gestiona HTTPS para todos los bots.
+
+---
+
+## INSTRUCCION RAPIDA PARA EL AGENTE (OpenCode)
+
+> **IMPORTANTE:** Si el usuario pregunta por "crear cliente", "nuevo cliente",
+> "alta de cliente", "onboarding", "como agrego un bot", o cualquier tema
+> relacionado con `new_client.sh`, **LEER INMEDIATAMENTE** `docs/CREAR_CLIENTE.md`
+> y responder con los pasos rapidos de ese documento.
+> No inventar pasos ni rutas. Usar SIEMPRE los datos de `docs/CREAR_CLIENTE.md`.
 
 ---
 
 ## Proposito
 
-Bot de WhatsApp basado en RAG que responde consultas sobre la Secretaria Virtual de Rodrigo Rodriguez. Atiende clientes 24/7, responde preguntas frecuentes y ayuda a cerrar ventas.
+Plataforma de bots de WhatsApp basados en RAG. Cada cliente tiene su propia instancia aislada con documentos, prompt y numero de telefono propios. Atiende clientes 24/7, responde preguntas frecuentes y ayuda a cerrar ventas.
 
 ## Tech Stack
 
@@ -155,14 +165,14 @@ El Caddy maestro esta en `/mnt/data/boston-ai/` y sirve ambos dominios via Docke
 - `WHATSAPP_MODE` (fake | meta)
 - `META_ACCESS_TOKEN`, `META_PHONE_NUMBER_ID`, `META_WABA_ID`, `META_APP_SECRET`, `META_VERIFY_TOKEN`
 - `META_VALIDATE_SIGNATURE` (true para produccion)
-- `DOMAIN=bot.rodrigorodriguez.com.ar`
+- `DOMAIN=rodrigo.asistentebot.com.ar` (configurable por cliente)
 - `WEBHOOK_MODE` (inline | async)
 - `ADMIN_API_KEY` (para panel de administracion)
 - `HANDOFF_TRANSITION_MESSAGE` (mensaje al pasar a humano)
 
 ## Panel de Administracion (Human Handoff)
 
-URL: `https://bot.rodrigorodriguez.com.ar/admin`
+URL: `https://rodrigo.asistentebot.com.ar/admin` (por cliente)
 
 ### Funcionalidades
 
