@@ -73,10 +73,24 @@ def _parse_inbound_message(msg: Dict[str, Any]) -> Optional[InboundTextMessage]:
         return None
 
     msg_type = msg.get("type")
-    if msg_type != "text":
-        return None
+    text_body = ""
 
-    text_body = msg.get("text", {}).get("body")
+    if msg_type == "text":
+        text_body = msg.get("text", {}).get("body", "")
+    elif msg_type == "interactive":
+        interactive = msg.get("interactive", {})
+        interactive_type = interactive.get("type", "")
+        if interactive_type == "button_reply":
+            btn = interactive.get("button_reply", {})
+            btn_id = btn.get("id", "")
+            btn_title = btn.get("title", "")
+            text_body = f"[{btn_id}] {btn_title}"
+        elif interactive_type == "list_reply":
+            row = interactive.get("list_reply", {})
+            row_id = row.get("id", "")
+            row_title = row.get("title", "")
+            text_body = f"[{row_id}] {row_title}"
+
     if not text_body:
         return None
 

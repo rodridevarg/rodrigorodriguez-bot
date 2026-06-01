@@ -44,16 +44,19 @@ app/                # Codigo Python
   rag_service.py    # Pipeline RAG
   retriever.py      # Busqueda semantica
   vector_store.py   # ChromaDB wrapper
-  whatsapp_*.py     # Integracion WhatsApp (Meta API)
-  whatsapp_store.py # SQLite store para mensajes
-  whatsapp_service.py # Logica de procesamiento + human handoff
-  worker.py         # Background worker (procesa cola async)
-  sse_manager.py    # Server-Sent Events para panel admin
-  chat_local.py     # Chat por consola (testing)
+  whatsapp_sender.py  # Envio de mensajes WhatsApp (Meta API)
+  whatsapp_parser.py  # Parseo de webhooks entrantes
+  whatsapp_models.py  # Modelos de datos
+  whatsapp_store.py   # SQLite store para mensajes
+  whatsapp_service.py # Logica de procesamiento + botones interactivos + human handoff
+  worker.py           # Background worker (procesa cola async)
+  sse_manager.py      # Server-Sent Events para panel admin
+  chat_local.py       # Chat por consola (testing)
 
 data/docs/          # Base de conocimientos (markdown)
 scripts/            # Utilitarios
   index_documents.py
+  test_conversation_flows.py  # Tests de flujos de conversacion
   run_worker.py
   deploy.sh         # Deploy rapido (no toca aibrain)
   setup_vps.sh      # Setup inicial en VPS (UNA SOLA VEZ, se auto-elimina)
@@ -67,7 +70,10 @@ ui/                 # Chat web estatico
   admin/
     index.html      # Panel de administracion (human handoff)
 docs/
-  VPS_DEPLOY.md     # Guia completa de deploy en VPS
+  VPS_DEPLOY.md           # Guia completa de deploy en VPS
+  BOTONES_WHATSAPP.md     # Guia de botones interactivos (Reply Buttons + List Messages)
+  FLUJOS_CONVERSACION.md  # Documentacion de flujos y anti-loop
+  TESTING.md              # Guia de testing de conversaciones
 ```
 
 ## Running Local (Windows)
@@ -202,6 +208,42 @@ URL: `https://rodrigo.asistentebot.com.ar/admin` (por cliente)
 | `POST` | `/admin/conversations/{phone}/release` | Liberar al bot |
 | `POST` | `/admin/conversations/{phone}/reply` | Enviar mensaje manual |
 
+## Botones Interactivos de WhatsApp
+
+El bot soporta **mensajes interactivos** via API oficial de Meta:
+
+- **Reply Buttons:** Hasta 3 botones inline (bienvenida, acciones principales)
+- **List Messages:** Menú desplegable con hasta 10 opciones (catálogos, obras sociales, servicios)
+
+### Flujo de botones
+
+```
+Usuario: "Hola"
+  → Bot: [🗓️ Sacar turno] [💳 Obras sociales] [💰 Precios]
+
+Usuario: toca "💳 Obras sociales"
+  → Bot: [Lista desplegable: OSDE, Swiss, Galeno, ...]
+
+Usuario: toca "OSDE"
+  → Bot: "Con OSDE los copagos son: 210/310 sin copago..." (via RAG)
+```
+
+### Documentación
+
+- `docs/BOTONES_WHATSAPP.md` — Guía completa de implementación
+- `docs/FLUJOS_CONVERSACION.md` — Flujos de conversación y sistema anti-loop
+- `docs/TESTING.md` — Cómo testear conversaciones automáticamente
+
+### Testing automático
+
+```bash
+python scripts/test_conversation_flows.py
+```
+
+Resultado esperado: `8/8 tests pasaron | 0 fallos`
+
+---
+
 ## Notas tecnicas
 
 ### Arquitectura de procesamiento
@@ -232,4 +274,4 @@ Tablas principales:
 
 ---
 
-*Ultima actualizacion: 2026-05-27*
+*Ultima actualizacion: 2026-06-01*

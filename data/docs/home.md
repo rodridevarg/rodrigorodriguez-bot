@@ -1,29 +1,30 @@
-# Secretaria Virtual de Rodrigo Rodriguez
+# Centro Médico Demostración
 
-## ¿Qué es la Secretaria Virtual?
+## Bienvenidos
 
-La **Secretaria Virtual** es un sistema de atención automatizada por WhatsApp que trabaja 24/7 para tu negocio.
+El **Centro Médico Demostración** es un consultorio de medicina general ubicado en el corazón de la ciudad. Contamos con más de 10 años de trayectoria atendiendo pacientes de todas las edades con un enfoque integral, humano y profesional.
 
-Atiende clientes, responde preguntas y ayuda a cerrar ventas automáticamente, sin que vos tengas que estar pendiente del celular.
+## Nuestro equipo
 
-## Beneficios principales
+- **Dr. Juan Pérez** — Médico clínico general. Más de 15 años de experiencia. Matrícula nacional N° 58.432.
+- **Dra. María González** — Médica clínica. Especialista en medicina preventiva y nutrición.
+- **Lic. Carla Martínez** — Secretaría y administración de turnos.
 
-- **Atención 24/7**: Nunca más perdés una venta por no responder a tiempo. Tu Secretaria Virtual atiende clientes de día y de noche, incluso los fines de semana.
-- **Más ventas, menos trabajo**: Respondé por vos mientras hacés otras cosas. Tus clientes reciben respuesta inmediata y vos no perdés tiempo.
-- **Funciona con lo que ya tenés**: WhatsApp, WooCommerce, Shopify, TiendaNube o el sistema que uses. No necesitás cambiar nada de tu negocio actual.
+## Especialidades y servicios
 
-## ¿Para quién es?
+Atendemos consultas generales y control de patologías crónicas como:
+- Hipertensión arterial
+- Diabetes
+- Control de colesterol y triglicéridos
+- Problemas de tiroides
+- Alergias y problemas respiratorios
+- Dolores abdominales y digestivos
+- Chequeos anuales de salud
 
-Para emprendedores, profesionales y negocios de cualquier tamaño que:
-- Reciben consultas por WhatsApp
-- Quieren atender más rápido sin contratar personal
-- Necesitan responder preguntas frecuentes de forma automática
-- Quieren capturar leads y calificar clientes mientras duermen
+## Filosofía de atención
 
-## ¿Por qué WhatsApp?
-
-El 70% de los clientes esperan una respuesta inmediata. WhatsApp es el canal de comunicación más usado en Argentina y Latinoamérica. Si tu negocio no responde rápido, el cliente va con la competencia.
+Creemos en la medicina centrada en el paciente. Cada persona es única y merece tiempo, escucha activa y un plan de salud a medida.
 
 ---
 
-**¿Querés ver cómo funciona?** Escribime por WhatsApp: +54 9 2477 614405
+**¿Tenés dudas? Escribinos por WhatsApp y te ayudamos.**

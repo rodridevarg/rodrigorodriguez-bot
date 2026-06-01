@@ -1,65 +1,69 @@
-# Preguntas Frecuentes (FAQ)
+# Preguntas Frecuentes — Centro Médico Demostración
 
-## ¿Necesito saber de tecnología?
+## ¿Necesito turno previo?
 
-**No.** Yo me encargo de toda la configuración técnica. Vos solo me pasás la información de tu negocio (productos, precios, políticas) y yo armo todo.
+Sí, **todos los turnos son con cita previa**. Podés solicitarlo por WhatsApp, por teléfono o por email. Respondemos en un máximo de 24 horas hábiles.
 
-## ¿Cuánto tarda en estar listo?
+## ¿Cuánto dura la consulta?
 
-De **2 a 5 días hábiles** según la complejidad. Un negocio simple con preguntas frecuentes puede estar en 2 días. Un e-commerce con integración de stock puede llevar 5.
+- Primera vez: 30 a 45 minutos
+- Control: 20 minutos
+- Telemedicina: 20 minutos
 
-## ¿Puedo probarlo antes de contratar?
+## ¿Atienden por obra social?
 
-Sí. Podemos hacer una **demo personalizada** con información de tu negocio para que veas cómo respondería. Sin costo y sin compromiso.
+Sí, aceptamos las principales obras sociales y prepagas del país: OSDE, Swiss Medical, Galeno, Medicus, Omint, Medifé, PAMI (con autorización previa), IOMA, SIPSSA, OSPJN, OSPE, APROSS, OSME y muchas más.
 
-## ¿Es para mi negocio?
+Al llegar, presentá tu credencial de afiliado. Si no estás seguro de tu cobertura, escribinos por WhatsApp con tu obra social y plan, y te confirmamos.
 
-La Secretaria Virtual sirve para cualquier negocio que reciba consultas por WhatsApp:
-- Tiendas online (ropa, tecnología, muebles, etc.)
-- Profesionales (abogados, contadores, médicos, arquitectos, nutricionistas)
-- Servicios (limpieza, mantenimiento, gastronomía, estética)
-- Comercios con atención por WhatsApp
+## ¿Qué debo llevar a la primera consulta?
 
-Si tus clientes te escriben por WhatsApp, esto es para vos.
+- Documento de identidad
+- Credencial de obra social o prepaga (si tenés)
+- Estudios previos relevantes (análisis de sangre, electrocardiogramas, etc.)
+- Libreta o lista de medicamentos que estés tomando actualmente
+- Historia clínica anterior (si cambiás de médico)
 
-## ¿Hay contrato de por vida?
+## ¿Cuánto tardan los resultados de laboratorio?
 
-**No.** Podés probarlo sin riesgo. Sin letras chicas ni compromisos de por vida. Si no te sirve, no hay problema.
+- Hemograma, glucemia, orina: 24 horas hábiles
+- Perfil lipídico, función tiroidea: 48 a 72 horas hábiles
+- Curva de tolerancia: 48 horas hábiles
 
-## ¿Funciona con mi tienda en TiendaNube / WooCommerce / Shopify?
+Te avisamos por WhatsApp cuando estén listos. También podés consultar online.
 
-Sí. Se integra con las principales plataformas de e-commerce para consultar stock, precios y envíos.
+## ¿Atienden urgencias?
 
-## ¿Y si no tengo tienda online?
+No. El Centro Médico Demostración no cuenta con guardia ni servicio de urgencias. En caso de emergencia médica, acudí a la guardia del hospital más cercano o llamá al **107 SAME** o al **911**.
 
-También funciona. Cargo manualmente tu catálogo de productos/servicios y precios. La Secretaria Virtual responde con esa información.
+## ¿Hay estacionamiento cerca?
 
-## ¿Qué pasa si la Secretaria Virtual no sabe responder algo?
+Sí, contamos con convenio con el estacionamiento del edificio (1 hora gratis con validación en recepción). También hay estacionamiento por hora en la calle.
 
-Se deriva la conversación a vos con un mensaje tipo "Te paso con Rodrigo para que te ayude personalmente". Vos recibís la notificación y tomás el control.
+## ¿Puedo cancelar o reprogramar el turno?
 
-## ¿Es seguro? ¿Meta no me bloquea?
+Sí, **con al menos 24 horas de anticipación** sin cargo. Si cancelás con menos tiempo o no te presentás, se reserva el derecho de cobrar una seña para futuros turnos.
 
-Uso la **API oficial de WhatsApp Business** de Meta. Es 100% legal y seguro. No usa trucos ni librerías no oficiales.
+## ¿Hacen estudios en el consultorio?
 
-## ¿Puedo cambiar las respuestas después?
+No realizamos estudios de laboratorio ni de imagen en el consultorio. El Dr. Pérez te indica los estudios y te derivamos a laboratorios y centros de imagen con los que tenemos convenio, ubicados a pocas cuadras.
 
-Sí. La base de conocimientos se actualiza en cualquier momento. Si cambiás precios, políticas o productos, lo actualizo por vos.
+## ¿Atienden niños?
 
-## ¿Atiende en otros idiomas?
+Sí, el Dr. Juan Pérez y la Dra. María González atienden pacientes de todas las edades. Para bebés menores de 2 años, recomendamos pedir turno por la mañana.
 
-Por defecto configuro en español. Se puede configurar en portugués para Brasil u otros idiomas según necesidad.
+## ¿Cómo funciona la telemedicina?
 
-## ¿Qué diferencia hay con los chatbots genéricos?
+Es ideal para seguimientos, resultados de estudios o renovación de recetas. La coordinamos por WhatsApp y te enviamos el link de la videollamada. Debes haber tenido al menos una consulta presencial previa.
 
-- **Hecho a medida**: No es un bot genérico. Aprende TU negocio, TU tono, TUS productos.
-- **IA avanzada**: Usa modelos de lenguaje modernos (como Kimi/GPT) para entender preguntas complejas, no solo palabras clave.
-- **Memoria de conversación**: Recuerda el contexto de la charla. No responde como robot.
-- **Sin contratos**: No te atas a una plataforma.
+## ¿Emiten recetas de medicamentos controlados?
 
----
+Sí, pero solo en consulta presencial y con la receta correspondiente según normativa nacional (receta de doble folio para psicotrópicos y estupefacientes).
 
-**¿Te quedó alguna duda?**
+## ¿Puedo pedir turno para un familiar?
 
-WhatsApp: +54 9 2477 614405
-Email: rodrigo@rodrigorodriguez.com.ar
+Sí, podés solicitar turno para un familiar directo (cónyuge, hijos, padres) presentando su documento y credencial de obra social. También pueden escribir directamente ellos por WhatsApp.
+
+## ¿Están abiertos los sábados?
+
+Sí, los sábados atendemos de 9:00 a 13:00, solo consultas generales y controles. No se realizan consultas de check-up ni se entregan resultados complejos los sábados.

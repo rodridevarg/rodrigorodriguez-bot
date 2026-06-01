@@ -1,43 +1,63 @@
-# Proceso de implementación
+# Cómo solicitar un turno — Centro Médico Demostración
 
-## ¿Cómo funciona? En 3 pasos simples
+## Opción 1: Por WhatsApp (la más rápida)
 
-### Paso 1: Hablás conmigo
+1. Escribinos por WhatsApp al +54 11 2345-6789
+2. Indicanos tu nombre completo, DNI y obra social o prepaga (si tenés)
+3. Contanos el motivo de consulta: primera vez, control de rutina, control de patología crónica, etc.
+4. Te proponemos horarios disponibles dentro de las próximas 48 a 72 horas
+5. Confirmás el turno
+6. Te enviamos recordatorio por WhatsApp 24 horas antes
 
-Me contás sobre tu negocio. Es gratis y sin compromiso.
+## Opción 2: Por teléfono
 
-Entiendo:
-- Qué productos o servicios ofrecés
-- Cómo te contactan tus clientes hoy
-- Qué preguntas te hacen todo el tiempo
-- Qué sistema usás (TiendaNube, WooCommerce, Shopify, etc.)
+Llamanos al +54 11 4567-8901 en horario de atención (lunes a viernes 8:00 a 20:00, sábados 9:00 a 13:00).
 
-**Duración**: 20-30 minutos por WhatsApp o videollamada.
+## Opción 3: Por email
 
-### Paso 2: Armamos tu Secretaria Virtual
+Envianos un email a turnos@centromedicodemo.com con:
+- Nombre completo
+- DNI
+- Obra social o prepaga
+- Motivo de consulta
+- Días y horarios de preferencia
 
-Configuro todo por vos en pocos días.
+Te respondemos en un máximo de 24 horas hábiles.
 
-Personalizo:
-- Las respuestas para tu marca y tono
-- Tu catálogo de productos o servicios
-- Precios, envíos, políticas de tu negocio
-- Integración con tu sistema actual (si aplica)
+## Primera visita
 
-**No necesitás saber de tecnología.** Yo me encargo de todo.
+1. **Llegar 10 minutos antes** de la hora del turno
+2. **Presentarse en recepción** con documento y credencial de obra social
+3. **Completar ficha médica** (si es primera vez en el centro)
+4. **Atención con el Dr. Pérez o la Dra. González**
+5. Si se indican estudios, te explicamos cómo prepararte y dónde realizártelos
 
-**Duración**: 2-5 días hábiles según complejidad.
+## Cancelaciones y reprogramaciones
 
-### Paso 3: Empezás a vender
+Podés cancelar o reprogramar **con al menos 24 horas de anticipación** sin cargo.
 
-Tu Secretaria Virtual atiende sola.
+Si cancelás con menos tiempo o no te presentás, podemos pedirte una seña para futuros turnos.
 
-- Responde preguntas frecuentes automáticamente
-- Captura datos de clientes interesados
-- Deriva a vos solo los leads calientes que realmente necesitan atención humana
+## Estudios posteriores
 
-Vos solo cerrás los leads calientes.
+Si el médico te indica estudios de laboratorio o imagen:
+- Te damos la orden impresa o digital
+- Te indicamos el laboratorio o centro de imagen más cercano con convenio
+- Te explicamos la preparación necesaria (ayuno, suspensión de medicamentos, etc.)
+- Coordinamos turno de control para revisar los resultados
+
+## Recordatorios automáticos
+
+Te enviamos recordatorio por WhatsApp 24 horas antes de tu consulta. Solo tenés que responder **"Sí"** para confirmar. Si no respondés, te llamamos por teléfono.
+
+## Telemedicina (consulta online)
+
+Disponible para seguimientos simples, resultados de estudios o renovación de recetas. Requiere haber tenido al menos una consulta presencial previa.
+
+1. Solicitás turno de telemedicina por WhatsApp
+2. Te enviamos link de videollamada segura
+3. El médico te atiende en el horario acordado
 
 ---
 
-**¿Querés empezar?** Escribime por WhatsApp: +54 9 2477 614405
+**¿Tenés dudas? Escribinos por WhatsApp y te guiamos paso a paso.**

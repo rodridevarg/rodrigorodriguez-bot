@@ -1,41 +1,47 @@
-# Contacto
+# Contacto — Centro Médico Demostración
 
-## ¿Cómo contactar a Rodrigo Rodriguez?
+## WhatsApp (recomendado)
 
-### WhatsApp (recomendado)
+**+54 11 2345-6789**
 
-**+54 9 2477 614405**
+Escribinos directo por WhatsApp para:
+- Solicitar turnos
+- Consultar obras sociales y copagos
+- Preguntar por preparación de estudios
+- Cancelar o reprogramar turnos
+- Pedir resultados de estudios
 
-Escribime directo por WhatsApp para consultar por tu Secretaria Virtual. Respondo personalmente y te armo una propuesta sin compromiso.
+Link directo: https://wa.me/541123456789?text=Hola,%20quiero%20sacar%20un%20turno%20con%20el%20Dr.%20Perez
 
-Link directo: https://wa.me/5492477614405?text=Hola%20Rodrigo,%20quiero%20consultar%20por%20la%20Secretaria%20Virtual
+## Teléfono fijo
 
-### Email
+**+54 11 4567-8901**
 
-rodrigo@rodrigorodriguez.com.ar
+Atendemos llamadas en horario de consultorio. Si no respondemos, dejá un mensaje de voz y te llamamos de vuelta.
 
-Ideal para enviar información detallada de tu negocio, catálogos, o agendar una videollamada.
+## Email
 
-### Web
+turnos@centromedicodemo.com
 
-https://rodrigorodriguez.com.ar
+Ideal para enviar estudios previos, historias clínicas o consultas administrativas detalladas.
 
-Encontrás más info sobre el servicio, demo interactiva y formulario de contacto.
+## Dirección
 
-### Redes sociales
+**Av. Corrientes 1234, Piso 3, Oficina B, CABA**
 
-- Facebook: Rodrigo Rodriguez
+Entre las calles Uruguay y Paraná.
 
-## Horarios de atención
+## Cómo llegar
 
-Como soy yo personalmente el que atiende:
+- **Subte**: Línea B, estación Uruguay (a 2 cuadras) o Línea D, estación Tribunales (a 4 cuadras)
+- **Colectivos**: 12, 59, 60, 152, 168
+- **Estacionamiento**: Convenio con estacionamiento del edificio (1 hora gratis con validación en recepción)
 
-- **Lunes a viernes**: 9:00 a 18:00 (hora Argentina, GMT-3)
-- **Sábados**: 9:00 a 13:00
-- **Domingos**: Cerrado (pero tu Secretaria Virtual atiende 😉)
+## Redes sociales
 
-**Tiempo de respuesta**: Generalmente en menos de 2 horas en horario laboral.
+- Instagram: @centromedicodemo
+- Facebook: Centro Médico Demostración
 
 ---
 
-**No dudes en escribirme, la primera consulta es gratis y sin compromiso.**
+**Importante**: Este es un consultorio de demostración para probar la Secretaria Virtual. En un caso real, estos datos se personalizan con la información del médico cliente.
