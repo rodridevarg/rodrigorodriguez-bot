@@ -101,3 +101,8 @@ def validate_runtime_config():
         raise RuntimeError(
             f"Faltan variables de entorno críticas: {', '.join(missing)}"
         )
+
+
+# Google Calendar
+GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID", "")
+GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "")

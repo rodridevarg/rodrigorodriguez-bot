@@ -287,9 +287,19 @@ function get_template_val() {
     fi
 }
 
+# Inicializar variables Meta con valores vacios para evitar error con set -u
+META_ACCESS_TOKEN="${META_ACCESS_TOKEN:-}"
+META_WABA_ID="${META_WABA_ID:-}"
+META_APP_SECRET="${META_APP_SECRET:-}"
+
 [[ -z "$LLM_KEY" ]] && LLM_KEY=$(get_template_val "LLM_API_KEY")
 [[ -z "$LLM_URL" ]] && LLM_URL=$(get_template_val "LLM_BASE_URL")
 [[ -z "$LLM_MODEL" ]] && LLM_MODEL=$(get_template_val "LLM_MODEL")
+
+# Leer credenciales Meta del template (compartidas entre todos los clientes)
+[[ -z "$META_ACCESS_TOKEN" ]] && META_ACCESS_TOKEN=$(get_template_val "META_ACCESS_TOKEN")
+[[ -z "$META_WABA_ID" ]] && META_WABA_ID=$(get_template_val "META_WABA_ID")
+[[ -z "$META_APP_SECRET" ]] && META_APP_SECRET=$(get_template_val "META_APP_SECRET")
 
 cat > "${CLIENT_DIR}/.env" <<EOF
 # Cliente: ${CLIENT_NAME} (${CLIENT_SLUG})
@@ -313,9 +323,9 @@ COLLECTION_NAME="${COLLECTION_NAME}"
 # WhatsApp
 WHATSAPP_MODE="${WHATSAPP_MODE}"
 META_PHONE_NUMBER_ID="${META_PHONE_NUMBER_ID}"
-META_ACCESS_TOKEN=""
-META_WABA_ID=""
-META_APP_SECRET=""
+META_ACCESS_TOKEN="${META_ACCESS_TOKEN}"
+META_WABA_ID="${META_WABA_ID}"
+META_APP_SECRET="${META_APP_SECRET}"
 # El router central valida las firmas de Meta, no la instancia individual
 META_VERIFY_TOKEN="rodrigo_webhook_verify_2024"
 META_GRAPH_VERSION=v23.0
@@ -409,6 +419,21 @@ ${CLIENT_DOMAIN} {
     reverse_proxy ${CLIENT_SLUG}-web:8000
 }
 EOF
+fi
+
+# ============================
+# 4b. Validar credenciales Meta (si modo=meta)
+# ============================
+if [[ "$WHATSAPP_MODE" == "meta" ]]; then
+    missing=()
+    [[ -n "$META_PHONE_NUMBER_ID" ]] || missing+=("META_PHONE_NUMBER_ID")
+    [[ -n "$META_ACCESS_TOKEN" ]] || missing+=("META_ACCESS_TOKEN")
+    [[ -n "$META_VERIFY_TOKEN" ]] || missing+=("META_VERIFY_TOKEN")
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "[WARN] Faltan credenciales Meta: ${missing[*]}"
+        echo "[WARN] El contenedor web puede fallar al iniciar."
+        echo "[WARN] Verificar que el template .env tenga las credenciales completas."
+    fi
 fi
 
 # ============================

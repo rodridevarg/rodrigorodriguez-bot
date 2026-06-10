@@ -17,3 +17,8 @@ ngrok.exe
 ngrok.zip
 .vscode/
 .idea/
+
+# Credenciales de Google Cloud (no subir al repo)
+*.json
+guild-f42e3*.json
+nspa-*.json

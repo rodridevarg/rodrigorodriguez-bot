@@ -23,6 +23,11 @@ chmod +x scripts/new_client.sh
   --meta-phone-number-id "ID_DE_META"
 ```
 
+> **IMPORTANTE:** El primer build de Docker puede tardar **10-15 minutos** porque descarga librerias grandes (PyTorch, ChromaDB, etc.). No interrumpir el script. Si se corta, ejecutar manualmente:
+> ```bash
+> cd /mnt/data/cliente-{slug} && docker compose up -d --build
+> ```
+
 ---
 
 ## Requisitos Previos (tener listo ANTES de ejecutar)
@@ -84,6 +89,12 @@ cd /mnt/data/rodrigo-bot-template && ./scripts/list_clients.sh
 cd /mnt/data/rodrigo-bot-template && ./scripts/remove_client.sh --slug {slug} --yes
 ```
 
+> **Nota para Windows/PowerShell:** El operador `&&` no funciona en PowerShell. Usar `;` en su lugar o ejecutar comandos separados. Ejemplo:
+> ```powershell
+> scp archivo.txt root@167.114.96.29:/tmp/
+> ssh root@167.114.96.29 "comando"
+> ```
+
 ---
 
 ## Notas importantes
@@ -95,4 +106,36 @@ cd /mnt/data/rodrigo-bot-template && ./scripts/remove_client.sh --slug {slug} --
 
 ---
 
-*Ultima actualizacion: 2026-05-30*
+## Troubleshooting
+
+### El script se corto durante el build de Docker
+
+Esto es normal en el primer build. Las librerias (PyTorch, ChromaDB, etc.) pesan ~2GB y tardan en descargarse.
+
+**Solucion:**
+```bash
+cd /mnt/data/cliente-{slug} && docker compose up -d --build
+```
+
+### El contenedor web no inicia (ValueError: Faltan META_ACCESS_TOKEN)
+
+Si ves este error en los logs, significa que las credenciales de Meta no se copiaron correctamente.
+
+**Solucion:** Verificar que el template `.env` tenga las credenciales completas:
+```bash
+# Verificar que las claves existen (sin mostrar valores)
+grep '^META_' /mnt/data/rodrigo-bot-template/.env | sed 's/=.*/=[CONFIGURADO]/'
+```
+
+### Caddy no redirige el dominio
+
+Si el dominio no responde pero el health check local funciona:
+
+**Solucion:** Recargar Caddy manualmente:
+```bash
+cd /mnt/data/boston-ai && docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
+```
+
+---
+
+*Ultima actualizacion: 2026-06-10*
