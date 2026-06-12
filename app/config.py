@@ -106,3 +106,14 @@ def validate_runtime_config():
 # Google Calendar
 GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID", "")
 GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "")
+
+# Recordatorios de turnos (activable por admin)
+REMINDERS_ENABLED = os.getenv("REMINDERS_ENABLED", "false").lower() == "true"
+REMINDER_HOURS_BEFORE = int(os.getenv("REMINDER_HOURS_BEFORE", "24"))
+REMINDER_CONFIRMATION_REQUIRED = os.getenv("REMINDER_CONFIRMATION_REQUIRED", "true").lower() == "true"
+
+# Configuración de servicios y horarios (replicable)
+SERVICES_CONFIG_PATH = _env_path("SERVICES_CONFIG_PATH", DATA_DIR / "services.json")
+HOURS_CONFIG_PATH = _env_path("HOURS_CONFIG_PATH", DATA_DIR / "horarios.json")
+BUSINESS_ADDRESS = os.getenv("BUSINESS_ADDRESS", "")
+BUSINESS_NAME = os.getenv("BUSINESS_NAME", BOT_NAME)

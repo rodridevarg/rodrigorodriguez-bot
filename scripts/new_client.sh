@@ -350,6 +350,19 @@ HANDOFF_TRANSITION_MESSAGE="Estás siendo atendido por un asesor humano. En brev
 # Memoria
 CONVERSATION_MEMORY_MAX_TURNS=20
 CONVERSATION_ACTIVE_CONTEXT_TURNS=8
+
+# Google Calendar (vacío por defecto, se configura con setup_calendar.sh)
+GOOGLE_CALENDAR_ID=""
+GOOGLE_SERVICE_ACCOUNT_JSON=""
+
+# Recordatorios (activable por admin)
+REMINDERS_ENABLED=false
+REMINDER_HOURS_BEFORE=24
+REMINDER_CONFIRMATION_REQUIRED=true
+
+# Dirección del negocio
+BUSINESS_ADDRESS=""
+BUSINESS_NAME="${CLIENT_NAME}"
 EOF
 
 # ============================
@@ -374,6 +387,41 @@ EOF
 for doc in home servicios precios faq horarios contacto proceso; do
     touch "${CLIENT_DIR}/data/docs/${doc}.md"
 done
+
+# Crear configuración de servicios (template)
+cat > "${CLIENT_DIR}/data/services.json" <<'EOF'
+{
+  "servicios": [
+    {
+      "id": "servicio_ejemplo",
+      "nombre": "Servicio de Ejemplo",
+      "categoria": "General",
+      "duracion_minutos": 60,
+      "precio": 10000,
+      "keywords": ["ejemplo", "general", "servicio"]
+    }
+  ]
+}
+EOF
+
+# Crear configuración de horarios (template)
+cat > "${CLIENT_DIR}/data/horarios.json" <<'EOF'
+{
+  "zona_horaria": "America/Argentina/Buenos_Aires",
+  "dias": {
+    "lunes": {"apertura": "09:00", "cierre": "18:00", "abierto": true},
+    "martes": {"apertura": "09:00", "cierre": "18:00", "abierto": true},
+    "miercoles": {"apertura": "09:00", "cierre": "18:00", "abierto": true},
+    "jueves": {"apertura": "09:00", "cierre": "18:00", "abierto": true},
+    "viernes": {"apertura": "09:00", "cierre": "18:00", "abierto": true},
+    "sabado": {"abierto": false},
+    "domingo": {"abierto": false}
+  },
+  "duracion_turno_default": 60,
+  "intervalo_minutos": 30,
+  "feriados": []
+}
+EOF
 
 cat > "${CLIENT_DIR}/data/docs/home.md" <<EOF
 # ${CLIENT_NAME}
@@ -528,12 +576,21 @@ echo "        - contacto.md    (como contactar)"
 echo "      Luego reindexar:"
 echo "        cd ${CLIENT_DIR} && docker compose exec web python scripts/index_documents.py"
 echo ""
-echo "  [ ] 2. PROMPT DEL SISTEMA"
+echo "  [ ] 2. CONFIGURAR GOOGLE CALENDAR (opcional)"
+echo "      Si el cliente quiere agendar turnos automáticamente:"
+echo "        ./scripts/setup_calendar.sh --slug ${CLIENT_SLUG}"
+echo ""
+echo "  [ ] 3. CONFIGURAR SERVICIOS Y HORARIOS"
+echo "      Editar archivos JSON:"
+echo "        ${CLIENT_DIR}/data/services.json"
+echo "        ${CLIENT_DIR}/data/horarios.json"
+echo ""
+echo "  [ ] 4. PROMPT DEL SISTEMA"
 echo "      Editar el tono y estilo del bot:"
 echo "        ${CLIENT_DIR}/data/system_prompt.txt"
 echo ""
 if [[ "${WHATSAPP_MODE}" == "meta" && -n "${META_PHONE_NUMBER_ID}" ]]; then
-  echo "  [ ] 3. WHATSAPP (Meta Developers)"
+  echo "  [ ] 5. WHATSAPP (Meta Developers)"
   echo "      a) Ir a Meta Developers > WhatsApp > Configuracion > Webhook"
   echo "      b) URL de devolucion de llamada:"
   echo "         https://asistentebot.com.ar/webhook"
@@ -549,14 +606,14 @@ if [[ "${WHATSAPP_MODE}" == "meta" && -n "${META_PHONE_NUMBER_ID}" ]]; then
   echo "         Luego: docker compose down && docker compose up -d"
   echo ""
 else
-  echo "  [ ] 3. WHATSAPP (omitiendo - modo ${WHATSAPP_MODE})"
+  echo "  [ ] 5. WHATSAPP (omitiendo - modo ${WHATSAPP_MODE})"
   echo "      Si luego queres activar WhatsApp real:"
   echo "      - Editar .env: WHATSAPP_MODE=meta"
   echo "      - Agregar META_PHONE_NUMBER_ID"
   echo "      - Rehacer: docker compose down && docker compose up -d"
   echo ""
 fi
-echo "  [ ] 4. PROBAR"
+echo "  [ ] 6. PROBAR"
 echo "      Health check:"
 echo "        curl https://${CLIENT_DOMAIN}/health"
 echo "      Chat web:"
@@ -564,7 +621,7 @@ echo "        https://${CLIENT_DOMAIN}/chat"
 echo "      Panel admin:"
 echo "        https://${CLIENT_DOMAIN}/admin"
 echo ""
-echo "  [ ] 5. ENTREGAR AL CLIENTE"
+echo "  [ ] 7. ENTREGAR AL CLIENTE"
 echo "      - URL del chat web"
 echo "      - URL del panel admin"
 echo "      - Admin API Key (para acceder al panel)"
