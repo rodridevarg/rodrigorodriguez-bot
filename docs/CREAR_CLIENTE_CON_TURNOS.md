@@ -24,18 +24,21 @@
 
 Antes de empezar, asegurate de tener:
 
-- Acceso SSH al VPS (`ssh -i ~/.ssh/boston_vps root@167.114.96.29`)
+- Acceso SSH al VPS (`ssh -i ~/.ssh/boston_vps ubuntu@167.114.96.29`)
 - El `PHONE_NUMBER_ID` del numero de WhatsApp del cliente (desde Meta Developers)
-- El `GOOGLE_CALENDAR_ID` del cliente (que el cliente te comparte)
+- El `GOOGLE_CALENDAR_ID` del cliente (que el cliente te comparte) - opcional
 - Definido el slug, dominio, nombre y telefono del cliente
+- Tener listo el archivo JSON de la cuenta de servicio de Google (o usar el existente)
+
+> **Nota:** La infraestructura base ya esta configurada (Caddy, webhook-router, Docker network). Solo hay que ejecutar el script para crear el cliente.
 
 ---
 
 ## Paso 1: Crear el Cliente (2 minutos)
 
 ```bash
-ssh -i ~/.ssh/boston_vps root@167.114.96.29
-cd /mnt/data/rodrigo-bot-template
+ssh -i ~/.ssh/boston_vps ubuntu@167.114.96.29
+cd /mnt/data/cliente-nspa
 
 ./scripts/new_client.sh \
   --name "Peluqueria Juancho" \
@@ -163,17 +166,38 @@ Hola! Para activar los turnos automaticos necesito que hagas esto:
    Ejemplo: abc123@group.calendar.google.com
 ```
 
-### 4.2. Ejecutar el script de setup
+### 4.2. Configurar Google Calendar manualmente
 
 ```bash
-cd /mnt/data/rodrigo-bot-template
-./scripts/setup_calendar.sh --slug juancho --calendar-id "abc123@group.calendar.google.com"
+# 1. Copiar el archivo JSON de la cuenta de servicio al contenedor
+#    (si ya existe en el VPS, usar el mismo; si no, subirlo primero)
+docker cp /mnt/data/cliente-juancho/data/google-service-account.json juancho-web:/app/data/
+
+# 2. Actualizar el .env del cliente
+nano /mnt/data/cliente-juancho/.env
 ```
 
-**Esto hace:**
-- Agrega las variables `GOOGLE_CALENDAR_ID` y `GOOGLE_SERVICE_ACCOUNT_JSON` al `.env`
-- Copia los archivos de config al container
-- Reinicia los contenedores
+Agregar al final:
+```bash
+# Google Calendar
+GOOGLE_CALENDAR_ID="abc123@group.calendar.google.com"
+GOOGLE_SERVICE_ACCOUNT_JSON=/app/data/google-service-account.json
+```
+
+```bash
+# 3. Reiniciar contenedores
+cd /mnt/data/cliente-juancho
+docker compose down && docker compose up -d
+
+# 4. Verificar que funciona
+docker compose exec web python -c "from app.calendar_service import is_calendar_configured; print(is_calendar_configured())"
+```
+
+**Nota:** Si no tenés el archivo JSON de la cuenta de servicio, necesitás:
+1. Ir a Google Cloud Console > IAM > Cuentas de servicio
+2. Crear una cuenta de servicio o usar la existente
+3. Descargar el archivo JSON de la clave
+4. Subirlo al VPS y copiarlo al contenedor
 
 ---
 
@@ -316,17 +340,17 @@ Tus clientes pueden escribir al WhatsApp y:
 
 ```bash
 # Ver logs
-ssh -i ~/.ssh/boston_vps root@167.114.96.29
+ssh -i ~/.ssh/boston_vps ubuntu@167.114.96.29
 cd /mnt/data/cliente-juancho && docker compose logs -f
 
 # Reiniciar si se modifica .env
 cd /mnt/data/cliente-juancho && docker compose down && docker compose up -d
 
 # Ver estado de todos los clientes
-cd /mnt/data/rodrigo-bot-template && ./scripts/list_clients.sh
+cd /mnt/data/cliente-nspa && ./scripts/list_clients.sh
 
 # Eliminar cliente (CUIDADO)
-cd /mnt/data/rodrigo-bot-template && ./scripts/remove_client.sh --slug juancho --yes
+cd /mnt/data/cliente-nspa && ./scripts/remove_client.sh --slug juancho --yes
 
 # Agregar/cambiar servicios en caliente
 cd /mnt/data/cliente-juancho
@@ -390,4 +414,4 @@ curl -X POST https://juancho.asistentebot.com.ar/ask-public \
 
 ---
 
-*Ultima actualizacion: 2026-06-11*
+*Ultima actualizacion: 2026-06-12*
