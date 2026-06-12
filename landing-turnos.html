@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistente de Turnos por WhatsApp | Agendá automático 24/7</title>
+  <meta name="description" content="Tus clientes agendan turnos por WhatsApp sin que vos hagas nada. Peluquerías, spas, barberías, centros de estética. Setup en 48 horas." />
+  <meta name="author" content="Rodrigo Rodriguez" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#faf8f5" />
+  <link rel="canonical" href="https://asistentebot.com.ar/turnos" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://asistentebot.com.ar/turnos" />
+  <meta property="og:title" content="Asistente de Turnos por WhatsApp | Agendá automático 24/7" />
+  <meta property="og:description" content="Tus clientes agendan turnos por WhatsApp sin que vos hagas nada. Peluquerías, spas, barberías, centros de estética." />
+  <meta property="og:locale" content="es_AR" />
+
+  <meta name="keywords" content="agenda turnos whatsapp, bot turnos peluqueria, secretaria virtual spa, agendamiento automatico whatsapp, turnos barberia, reservas whatsapp" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-body: #faf8f5;
+      --bg-card: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #5a5a5a;
+      --accent: #c49a6c;
+      --accent-hover: #b08555;
+      --accent-light: #f5ebe0;
+      --border: #e8e2db;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 10px 40px rgba(0,0,0,0.06);
+      --shadow-accent: 0 10px 40px rgba(196,154,108,0.15);
+      --transition: all 0.3s ease;
+      --container: 1100px;
+      --header-h: 64px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: var(--header-h);
+      z-index: 1000;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: var(--transition);
+    }
+    .header.scrolled {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom-color: var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+    }
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo__icon {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+    }
+    .btn--primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: var(--shadow-accent);
+    }
+    .btn--primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 48px rgba(196,154,108,0.28);
+    }
+    .btn--secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1.5px solid var(--border);
+    }
+    .btn--secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn--small { padding: 10px 20px; font-size: 0.9rem; }
+    .btn--block { width: 100%; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: var(--header-h);
+      background: linear-gradient(135deg, var(--bg-body) 0%, var(--accent-light) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(196,154,108,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero__container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 80px 24px;
+    }
+    .hero__title {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .hero__title span { color: var(--accent); }
+    .hero__subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+    .hero__cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .hero__phone {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .hero__phone-preview {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      max-width: 340px;
+      position: relative;
+    }
+    .hero__phone-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero__phone-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .hero__phone-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .hero__phone-status {
+      font-size: 0.8rem;
+      color: #22c55e;
+    }
+    .chat-bubble {
+      background: var(--bg-body);
+      border-radius: 14px 14px 14px 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      max-width: 90%;
+    }
+    .chat-bubble--bot {
+      background: var(--accent-light);
+      border-radius: 14px 14px 4px 14px;
+      margin-left: auto;
+      max-width: 90%;
+    }
+    .chat-bubble--menu {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin: 8px 0;
+    }
+    .chat-bubble--menu strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    .chat-bubble--menu div {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* Sections */
+    .section {
+      padding: 100px 0;
+    }
+    .section__header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 64px;
+    }
+    .section__label {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section__title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section__subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+
+    /* Problem cards */
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .problem-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .problem-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .problem-card__icon {
+      width: 48px; height: 48px;
+      background: var(--accent-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.5rem;
+    }
+    .problem-card__title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+    .problem-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* How it works */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .step-card {
+      text-align: center;
+      position: relative;
+    }
+    .step-card:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 32px;
+      right: -12px;
+      width: 24px;
+      height: 2px;
+      background: var(--border);
+    }
+    .step-card__number {
+      width: 64px; height: 64px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 20px;
+    }
+    .step-card__title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+    .step-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Benefits */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .benefit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .benefit-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .benefit-card__icon {
+      width: 48px; height: 48px;
+      background: var(--accent-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.5rem;
+    }
+    .benefit-card__title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .benefit-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Industries */
+    .industries-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .industry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .industry-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .industry-card__icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .industry-card__title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+    .industry-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .pricing-card--featured {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-accent);
+      position: relative;
+    }
+    .pricing-card--featured::before {
+      content: 'Más popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 16px;
+      border-radius: 100px;
+    }
+    .pricing-card__name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .pricing-card__price {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .pricing-card__price span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+    .pricing-card__setup {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .pricing-card__features {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .pricing-card__features li {
+      padding: 8px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pricing-card__features li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: #fff;
+      padding: 100px 0;
+      text-align: center;
+    }
+    .cta-section .section__title,
+    .cta-section .section__subtitle {
+      color: #fff;
+    }
+    .cta-section .btn--secondary {
+      border-color: rgba(255,255,255,0.4);
+      color: #fff;
+    }
+    .cta-section .btn--secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #fff;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 40px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .footer__copy {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* WhatsApp Float */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: #25d366;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+      transition: var(--transition);
+      z-index: 9999;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px rgba(37,211,102,0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero__container { grid-template-columns: 1fr; gap: 48px; }
+      .hero__phone-preview { max-width: 100%; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .step-card:not(:last-child)::after { display: none; }
+      .step-card:nth-child(2)::after { display: none; }
+    }
+    @media (max-width: 768px) {
+      .hero__title { font-size: 2.2rem; }
+      .section__title { font-size: 1.8rem; }
+      .problems-grid,
+      .benefits-grid,
+      .industries-grid,
+      .pricing-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero__cta { flex-direction: column; }
+      .hero__cta .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header" id="header">
+    <div class="container">
+      <a href="#" class="logo">
+        <div class="logo__icon">🗓️</div>
+        <span>AsistenteBot</span>
+      </a>
+      <a href="#contacto" class="btn btn--small btn--primary">Agendar reunión</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="container hero__container">
+        <div>
+          <h1 class="hero__title">Tus clientes agendan <span>por WhatsApp</span> sin que vos hagas nada.</h1>
+          <p class="hero__subtitle">Funciona 24/7. Responde en segundos. Confirma turnos automáticamente. Ideal para peluquerías, spas, barberías, centros de estética y cualquier negocio que trabaje con turnos.</p>
+          <div class="hero__cta">
+            <a href="#contacto" class="btn btn--primary">Quiero una demo</a>
+            <a href="#como-funciona" class="btn btn--secondary">Ver cómo funciona</a>
+          </div>
+          <div class="hero__phone">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Setup en 48 horas. Funciona con tu WhatsApp Business.</span>
+          </div>
+        </div>
+        <div class="hero__phone-preview">
+          <div class="hero__phone-header">
+            <div class="hero__phone-avatar">🧙‍♀️</div>
+            <div>
+              <div class="hero__phone-name">Herminda</div>
+              <div class="hero__phone-status">● En línea</div>
+            </div>
+          </div>
+          <div class="chat-bubble">Hola, quiero sacar turno para mañana</div>
+          <div class="chat-bubble chat-bubble--bot">¡Hola! ✨ Soy Herminda. ¿En qué puedo ayudarte? 👇</div>
+          <div class="chat-bubble chat-bubble--menu">
+            <strong>1️⃣ Sacar turno</strong>
+            <div>2️⃣ Ver servicios<br>3️⃣ Consultar precios<br>4️⃣ Cómo llegar<br>5️⃣ Mis turnos<br>6️⃣ Cancelar turno<br>7️⃣ Hablar con humano</div>
+          </div>
+          <div class="chat-bubble">1</div>
+          <div class="chat-bubble chat-bubble--bot">¿Qué servicio querés? 👇<br>a) Masaje Relajante<br>b) Limpieza Facial<br>c) Manicura Spa<br>z) 🏠 Volver al menú</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problemas -->
+    <section class="section" id="problemas">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label">Problemas que solucionamos</span>
+          <h2 class="section__title">¿Te pasa alguna de estas situaciones?</h2>
+        </div>
+        <div class="problems-grid">
+          <div class="problem-card">
+            <div class="problem-card__icon">📱</div>
+            <div class="problem-card__title">Contestás mensajes a deshoras</div>
+            <div class="problem-card__desc">Clientes que escriben a las 23hs preguntando por turnos y vos ya dormiste.</div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card__icon">🕐</div>
+            <div class="problem-card__title">Perdés tiempo en agendar</div>
+            <div class="problem-card__desc">Cada turno te lleva 5 minutos de mensajes de ida y vuelta. Eso suma horas por semana.</div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card__icon">❌</div>
+            <div class="problem-card__title">Turnos que no llegan</div>
+            <div class="problem-card__desc">Clientes que confirman por WhatsApp pero no aparecen. Y no te avisan con tiempo.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="section" id="como-funciona" style="background: var(--accent-light);">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label">Cómo funciona</span>
+          <h2 class="section__title">Setup en 4 pasos simples</h2>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-card__number">1</div>
+            <div class="step-card__title">Nos contás tu negocio</div>
+            <div class="step-card__desc">Nos decís qué servicios ofrecés, en qué horarios atendés, y cómo querés que responda el bot.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card__number">2</div>
+            <div class="step-card__title">Configuramos todo</div>
+            <div class="step-card__desc">Nosotros cargamos tus servicios, precios, horarios y conectamos tu WhatsApp Business.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card__number">3</div>
+            <div class="step-card__title">Conectamos el calendario</div>
+            <div class="step-card__desc">Tu Google Calendar se sincroniza automáticamente. Los turnos aparecen ahí en tiempo real.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card__number">4</div>
+            <div class="step-card__title">Empezás a recibir turnos</div>
+            <div class="step-card__desc">Los clientes escriben por WhatsApp y el bot agenda solo. Vos solo mirás el calendario.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="section" id="beneficios">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label">Beneficios</span>
+          <h2 class="section__title">¿Qué cambia en tu negocio?</h2>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-card__icon">🌙</div>
+            <div class="benefit-card__title">Atendé 24/7 sin estar</div>
+            <div class="benefit-card__desc">Los clientes agendan mientras dormís. El bot nunca descansa ni se olvida de responder.</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon">⚡</div>
+            <div class="benefit-card__title">Respondé en segundos</div>
+            <div class="benefit-card__desc">No más "Hola, ¿en qué puedo ayudarte?" esperando 3 horas. El bot responde al instante.</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon">📅</div>
+            <div class="benefit-card__title">Sincronizado con tu calendario</div>
+            <div class="benefit-card__desc">Google Calendar se actualiza solo. Vos y tu equipo ven los turnos en tiempo real.</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon">🎨</div>
+            <div class="benefit-card__title">Tu marca, tu voz</div>
+            <div class="benefit-card__desc">El bot habla como vos. Le ponés el nombre que quieras, el tono que prefieras, tu estilo.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Para quién es -->
+    <section class="section" id="industrias" style="background: var(--accent-light);">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label">Para quién es</span>
+          <h2 class="section__title">Ideal para cualquier negocio con turnos</h2>
+        </div>
+        <div class="industries-grid">
+          <div class="industry-card">
+            <div class="industry-card__icon">💇‍♀️</div>
+            <div class="industry-card__title">Peluquerías</div>
+            <div class="industry-card__desc">Cortes, color, peinados</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">💆‍♂️</div>
+            <div class="industry-card__title">Spas & Centros de estética</div>
+            <div class="industry-card__desc">Masajes, faciales, corporales</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">✂️</div>
+            <div class="industry-card__title">Barberías</div>
+            <div class="industry-card__desc">Cortes, barba, tratamientos</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">💅</div>
+            <div class="industry-card__title">Nail Studios</div>
+            <div class="industry-card__desc">Manicura, pedicura, nail art</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🧘‍♀️</div>
+            <div class="industry-card__title">Yoga & Pilates</div>
+            <div class="industry-card__desc">Clases, talleres, privados</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🦷</div>
+            <div class="industry-card__title">Consultorios</div>
+            <div class="industry-card__desc">Odontología, kinesiología, etc.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section" id="precios">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label">Planes</span>
+          <h2 class="section__title">Inversión simple, sin sorpresas</h2>
+          <p class="section__subtitle">Setup incluido. Cancelable cuando quieras. Sin permanencia.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pricing-card__name">Básico</div>
+            <div class="pricing-card__price">$80.000<span>/mes</span></div>
+            <div class="pricing-card__setup">Setup: $150.000</div>
+            <ul class="pricing-card__features">
+              <li>Bot con tu menú de servicios</li>
+              <li>Agendamiento automático</li>
+              <li>Panel de administración</li>
+              <li>Hasta 5 servicios</li>
+              <li>Soporte por email</li>
+            </ul>
+            <a href="#contacto" class="btn btn--secondary btn--block">Elegir plan</a>
+          </div>
+          <div class="pricing-card pricing-card--featured">
+            <div class="pricing-card__name">Pro</div>
+            <div class="pricing-card__price">$180.000<span>/mes</span></div>
+            <div class="pricing-card__setup">Setup: $300.000</div>
+            <ul class="pricing-card__features">
+              <li>Todo lo del plan Básico</li>
+              <li>Google Calendar sincronizado</li>
+              <li>Recordatorios automáticos</li>
+              <li>Cancelar / reprogramar turnos</li>
+              <li>Hasta 10 servicios</li>
+              <li>Human handoff (tomar control)</li>
+              <li>Soporte por WhatsApp</li>
+            </ul>
+            <a href="#contacto" class="btn btn--primary btn--block">Elegir plan</a>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-card__name">Enterprise</div>
+            <div class="pricing-card__price">$350.000<span>/mes</span></div>
+            <div class="pricing-card__setup">Setup: $500.000</div>
+            <ul class="pricing-card__features">
+              <li>Todo lo del plan Pro</li>
+              <li>Servicios ilimitados</li>
+              <li>Múltiples calendarios</li>
+              <li>Personalización completa</li>
+              <li>Soporte prioritario</li>
+              <li>Ajustes ilimitados</li>
+            </ul>
+            <a href="#contacto" class="btn btn--secondary btn--block">Elegir plan</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contacto">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__label" style="color: rgba(255,255,255,0.8);">Empezá hoy</span>
+          <h2 class="section__title">¿Querés ver cómo funciona en tu negocio?</h2>
+          <p class="section__subtitle">Te muestro en 20 minutos. Si te sirve, lo implementamos. Si no, no pasa nada.</p>
+        </div>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20la%20landing%20de%20turnos%20y%20quiero%20agendar%20una%20demo" class="btn btn--primary" style="background: #fff; color: var(--accent);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Escribirme por WhatsApp
+          </a>
+          <a href="mailto:rodrigo.desarrollador@gmail.com" class="btn btn--secondary">Mandame un email</a>
+        </div>
+        <p style="margin-top: 32px; font-size: 0.9rem; opacity: 0.8;">
+          También podés escribirme directo al +54 9 2477 614405
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__copy">© <span id="year"></span> AsistenteBot. Hecho con 💚 en Argentina.</p>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20la%20landing%20de%20turnos%20y%20quiero%20agendar%20una%20demo" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
