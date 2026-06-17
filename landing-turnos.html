@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MiCita | Agendá citas automáticamente por WhatsApp</title>
-  <meta name="description" content="Tus clientes agendan citas por WhatsApp sin que vos hagas nada. Peluquerías, spas, barberías, centros de estética. Setup en 48 horas." />
+  <title>MiCita | Tu secretaria virtual por WhatsApp</title>
+  <meta name="description" content="MiCita es tu secretaria virtual personalizada para WhatsApp. Atiende clientes, responde consultas y agenda citas automáticamente, las 24 horas, mientras vos trabajás." />
   <meta name="author" content="Rodrigo Rodriguez" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#faf8f5" />
@@ -12,11 +12,11 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://micita.com.ar" />
-  <meta property="og:title" content="MiCita | Agendá citas automáticamente por WhatsApp" />
-  <meta property="og:description" content="Tus clientes agendan citas por WhatsApp sin que vos hagas nada. Peluquerías, spas, barberías, centros de estética." />
+  <meta property="og:title" content="MiCita | Tu secretaria virtual por WhatsApp" />
+  <meta property="og:description" content="Dejá de responder WhatsApp manualmente. MiCita atiende clientes y agenda citas automáticamente, las 24 horas." />
   <meta property="og:locale" content="es_AR" />
 
-  <meta name="keywords" content="micita, agenda citas whatsapp, bot citas peluqueria, secretaria virtual spa, agendamiento automatico whatsapp, citas barberia, reservas whatsapp" />
+  <meta name="keywords" content="micita, secretaria virtual whatsapp, atencion automatica whatsapp, agenda citas whatsapp, recepcionista virtual, responder whatsapp automaticamente, bot turnos, asistente virtual negocio" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,7 +42,7 @@
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: var(--bg-body);
@@ -53,6 +53,7 @@
 
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
+    ul { list-style: none; }
     .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
 
     /* Header */
@@ -65,7 +66,7 @@
       transition: var(--transition);
     }
     .header.scrolled {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(16px);
       border-bottom-color: var(--border);
       box-shadow: 0 2px 20px rgba(0,0,0,0.04);
@@ -77,8 +78,8 @@
       height: 100%;
     }
     .logo {
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-weight: 800;
+      font-size: 1.25rem;
       color: var(--text-primary);
       display: flex;
       align-items: center;
@@ -91,7 +92,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      color: #fff;
     }
 
     /* Buttons */
@@ -128,6 +130,15 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+    .btn--white {
+      background: #fff;
+      color: var(--accent);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .btn--white:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
     .btn--small { padding: 10px 20px; font-size: 0.9rem; }
     .btn--block { width: 100%; }
 
@@ -156,6 +167,18 @@
       align-items: center;
       padding: 80px 24px;
     }
+    .hero__label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 16px;
+      background: rgba(196,154,108,0.12);
+      padding: 6px 12px;
+      border-radius: 100px;
+    }
     .hero__title {
       font-size: 3.2rem;
       font-weight: 800;
@@ -168,31 +191,45 @@
       font-size: 1.15rem;
       color: var(--text-secondary);
       margin-bottom: 32px;
-      max-width: 480px;
+      max-width: 520px;
     }
     .hero__cta {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
+      margin-bottom: 32px;
     }
-    .hero__phone {
-      margin-top: 32px;
+    .hero__trust {
       display: flex;
       align-items: center;
       gap: 12px;
       font-size: 0.9rem;
       color: var(--text-secondary);
     }
-    .hero__phone-preview {
+    .hero__trust svg {
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+
+    /* Phone preview */
+    .phone-preview {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 20px;
       box-shadow: var(--shadow);
       max-width: 340px;
+      margin: 0 auto;
       position: relative;
     }
-    .hero__phone-header {
+    .phone-preview__caption {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 14px;
+    }
+    .phone-preview__caption strong { color: var(--text-primary); }
+    .phone-preview__header {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -200,7 +237,7 @@
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
     }
-    .hero__phone-avatar {
+    .phone-preview__avatar {
       width: 40px; height: 40px;
       border-radius: 50%;
       background: var(--accent-light);
@@ -209,11 +246,11 @@
       justify-content: center;
       font-size: 1.2rem;
     }
-    .hero__phone-name {
+    .phone-preview__name {
       font-weight: 600;
       font-size: 0.95rem;
     }
-    .hero__phone-status {
+    .phone-preview__status {
       font-size: 0.8rem;
       color: #22c55e;
     }
@@ -250,22 +287,23 @@
     }
 
     /* Sections */
-    .section {
-      padding: 100px 0;
-    }
+    .section { padding: 100px 0; }
     .section__header {
       text-align: center;
-      max-width: 640px;
+      max-width: 680px;
       margin: 0 auto 64px;
     }
     .section__label {
       display: inline-block;
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--accent);
       margin-bottom: 16px;
+      background: rgba(196,154,108,0.12);
+      padding: 6px 14px;
+      border-radius: 100px;
     }
     .section__title {
       font-size: 2.4rem;
@@ -279,15 +317,15 @@
       color: var(--text-secondary);
     }
 
-    /* Problem cards */
-    .problems-grid {
+    /* Pain / Solution */
+    .pain-grid, .solution-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
     }
-    .problem-card {
+    .pain-card, .solution-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -295,32 +333,135 @@
       text-align: center;
       transition: var(--transition);
     }
-    .problem-card:hover {
+    .pain-card:hover, .solution-card:hover {
       border-color: var(--accent);
       transform: translateY(-4px);
       box-shadow: var(--shadow);
     }
-    .problem-card__icon {
-      width: 48px; height: 48px;
-      background: var(--accent-light);
+    .pain-card__icon, .solution-card__icon {
+      width: 52px; height: 52px;
+      background: rgba(196,154,108,0.12);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
     }
-    .problem-card__title {
+    .pain-card__title, .solution-card__title {
       font-weight: 600;
       font-size: 1.05rem;
       margin-bottom: 8px;
     }
-    .problem-card__desc {
+    .pain-card__desc, .solution-card__desc {
       font-size: 0.9rem;
       color: var(--text-secondary);
     }
 
-    /* How it works */
+    /* Before / After */
+    .before-after {
+      background: var(--accent-light);
+    }
+    .before-after__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .ba-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+    }
+    .ba-card__title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ba-card__title--before { color: #9a3412; }
+    .ba-card__title--after { color: #15803d; }
+    .ba-card__list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .ba-card__list li:last-child { border-bottom: none; }
+    .ba-card__list li::before {
+      content: '•';
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    /* Demo */
+    .demo-section { background: var(--bg-body); }
+    .demo__layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .demo__content .section__header {
+      text-align: left;
+      margin: 0 0 32px 0;
+    }
+    .demo__bullets li {
+      padding: 12px 0;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .demo__bullets li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Industries */
+    .industries-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .industry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 16px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .industry-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .industry-card__icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .industry-card__title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* Steps */
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -363,159 +504,6 @@
       color: var(--text-secondary);
     }
 
-    /* Benefits */
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .benefit-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      text-align: center;
-      transition: var(--transition);
-    }
-    .benefit-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-    }
-    .benefit-card__icon {
-      width: 48px; height: 48px;
-      background: var(--accent-light);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 1.5rem;
-    }
-    .benefit-card__title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-    .benefit-card__desc {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-
-    /* Industries */
-    .industries-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .industry-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      text-align: center;
-      transition: var(--transition);
-    }
-    .industry-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-      box-shadow: var(--shadow);
-    }
-    .industry-card__icon {
-      font-size: 2.5rem;
-      margin-bottom: 12px;
-    }
-    .industry-card__title {
-      font-weight: 600;
-      font-size: 1.05rem;
-      margin-bottom: 4px;
-    }
-    .industry-card__desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    /* Pricing */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 960px;
-      margin: 0 auto;
-      align-items: start;
-    }
-    .pricing-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 40px 32px;
-      text-align: center;
-      transition: var(--transition);
-    }
-    .pricing-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow);
-    }
-    .pricing-card--featured {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-accent);
-      position: relative;
-    }
-    .pricing-card--featured::before {
-      content: 'Más popular';
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 16px;
-      border-radius: 100px;
-    }
-    .pricing-card__name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-    .pricing-card__price {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    .pricing-card__price span {
-      font-size: 1rem;
-      font-weight: 400;
-      color: var(--text-secondary);
-    }
-    .pricing-card__setup {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
-    .pricing-card__features {
-      text-align: left;
-      margin-bottom: 24px;
-    }
-    .pricing-card__features li {
-      padding: 8px 0;
-      font-size: 0.9rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .pricing-card__features li::before {
-      content: '✓';
-      color: var(--accent);
-      font-weight: 700;
-    }
-
     /* CTA Section */
     .cta-section {
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
@@ -524,9 +512,8 @@
       text-align: center;
     }
     .cta-section .section__title,
-    .cta-section .section__subtitle {
-      color: #fff;
-    }
+    .cta-section .section__subtitle { color: #fff; }
+    .cta-section .section__label { background: rgba(255,255,255,0.2); color: #fff; }
     .cta-section .btn--secondary {
       border-color: rgba(255,255,255,0.4);
       color: #fff;
@@ -573,18 +560,21 @@
     /* Responsive */
     @media (max-width: 1024px) {
       .hero__container { grid-template-columns: 1fr; gap: 48px; }
-      .hero__phone-preview { max-width: 100%; }
+      .phone-preview { max-width: 100%; }
+      .demo__layout { grid-template-columns: 1fr; gap: 48px; }
+      .demo__content .section__header { text-align: center; margin: 0 auto 32px; }
       .steps-grid { grid-template-columns: repeat(2, 1fr); }
       .step-card:not(:last-child)::after { display: none; }
       .step-card:nth-child(2)::after { display: none; }
+      .industries-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 768px) {
       .hero__title { font-size: 2.2rem; }
       .section__title { font-size: 1.8rem; }
-      .problems-grid,
-      .benefits-grid,
-      .industries-grid,
-      .pricing-grid { grid-template-columns: 1fr; }
+      .pain-grid,
+      .solution-grid,
+      .before-after__grid,
+      .industries-grid { grid-template-columns: 1fr; }
       .steps-grid { grid-template-columns: 1fr; }
       .hero__cta { flex-direction: column; }
       .hero__cta .btn { width: 100%; justify-content: center; }
@@ -596,10 +586,10 @@
   <header class="header" id="header">
     <div class="container">
       <a href="#" class="logo">
-        <div class="logo__icon">🗓️</div>
+        <div class="logo__icon">M</div>
         <span>MiCita</span>
       </a>
-      <a href="#contacto" class="btn btn--small btn--primary">Agendar reunión</a>
+      <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20que%20MiCita%20atienda%20mis%20consultas" class="btn btn--small btn--primary">Quiero mi secretaria virtual</a>
     </div>
   </header>
 
@@ -608,220 +598,305 @@
     <section class="hero" id="hero">
       <div class="container hero__container">
         <div>
-          <h1 class="hero__title">Tus clientes agendan <span>citas por WhatsApp</span> sin que vos hagas nada.</h1>
-          <p class="hero__subtitle">MiCita funciona 24/7. Responde en segundos. Confirma citas automáticamente. Ideal para peluquerías, spas, barberías, centros de estética y cualquier negocio que trabaje con reservas.</p>
+          <span class="hero__label">Secretaria virtual por WhatsApp</span>
+          <h1 class="hero__title">Dejá de responder WhatsApp. <span>Tu secretaria virtual lo hace por vos.</span></h1>
+          <p class="hero__subtitle">MiCita es una secretaria virtual personalizada para tu negocio. Atiende clientes, responde consultas y agenda citas automáticamente, las 24 horas. Vos seguís trabajando sin interrupciones.</p>
           <div class="hero__cta">
-            <a href="#contacto" class="btn btn--primary">Quiero una demo</a>
+            <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20que%20MiCita%20atienda%20mis%20consultas" class="btn btn--primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Quiero mi secretaria virtual
+            </a>
             <a href="#como-funciona" class="btn btn--secondary">Ver cómo funciona</a>
           </div>
-          <div class="hero__phone">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div class="hero__trust">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span>Setup en 48 horas. Funciona con tu WhatsApp Business.</span>
           </div>
         </div>
-        <div class="hero__phone-preview">
-          <div class="hero__phone-header">
-            <div class="hero__phone-avatar">🧙‍♀️</div>
-            <div>
-              <div class="hero__phone-name">MiCita</div>
-              <div class="hero__phone-status">● En línea</div>
+        <div>
+          <div class="phone-preview">
+            <div class="phone-preview__header">
+              <div class="phone-preview__avatar">🧙‍♀️</div>
+              <div>
+                <div class="phone-preview__name">Herminda</div>
+                <div class="phone-preview__status">● En línea</div>
+              </div>
             </div>
+            <div class="chat-bubble">Hola, quiero sacar turno para mañana</div>
+            <div class="chat-bubble chat-bubble--bot">¡Hola! ✨ Soy Herminda. ¿En qué puedo ayudarte? 👇</div>
+            <div class="chat-bubble chat-bubble--menu">
+              <strong>1️⃣ Sacar turno</strong>
+              <div>2️⃣ Ver servicios<br>3️⃣ Consultar precios<br>4️⃣ Cómo llegar<br>5️⃣ Mis turnos<br>6️⃣ Cancelar turno<br>7️⃣ Hablar con humano</div>
+            </div>
+            <div class="chat-bubble">1</div>
+            <div class="chat-bubble chat-bubble--bot">¿Qué servicio querés? 👇<br>a) Masaje Relajante<br>b) Limpieza Facial<br>c) Manicura Spa<br>z) 🏠 Volver al menú</div>
           </div>
-          <div class="chat-bubble">Hola, quiero sacar turno para mañana</div>
-          <div class="chat-bubble chat-bubble--bot">¡Hola! ✨ Soy MiCita. ¿En qué puedo ayudarte? 👇</div>
-          <div class="chat-bubble chat-bubble--menu">
-            <strong>1️⃣ Sacar turno</strong>
-            <div>2️⃣ Ver servicios<br>3️⃣ Consultar precios<br>4️⃣ Cómo llegar<br>5️⃣ Mis turnos<br>6️⃣ Cancelar turno<br>7️⃣ Hablar con humano</div>
-          </div>
-          <div class="chat-bubble">1</div>
-          <div class="chat-bubble chat-bubble--bot">¿Qué servicio querés? 👇<br>a) Masaje Relajante<br>b) Limpieza Facial<br>c) Manicura Spa<br>z) 🏠 Volver al menú</div>
+          <p class="phone-preview__caption"><strong>Ejemplo demostrativo:</strong> Herminda, secretaria de un spa.<br>Cada negocio recibe su propia secretaria personalizada.</p>
         </div>
       </div>
     </section>
 
-    <!-- Problemas -->
+    <!-- Pain -->
     <section class="section" id="problemas">
       <div class="container">
         <div class="section__header">
-          <span class="section__label">Problemas que solucionamos</span>
-          <h2 class="section__title">¿Te pasa alguna de estas situaciones?</h2>
+          <span class="section__label">¿Te pasa esto?</span>
+          <h2 class="section__title">El WhatsApp se convirtió en tu segunda oficina</h2>
+          <p class="section__subtitle">Si te sentís identificado con alguna de estas situaciones, MiCita puede ayudarte.</p>
         </div>
-        <div class="problems-grid">
-          <div class="problem-card">
-            <div class="problem-card__icon">📱</div>
-            <div class="problem-card__title">Contestás mensajes a deshoras</div>
-            <div class="problem-card__desc">Clientes que escriben a las 23hs preguntando por turnos y vos ya dormiste.</div>
+        <div class="pain-grid">
+          <div class="pain-card">
+            <div class="pain-card__icon">📱</div>
+            <div class="pain-card__title">Respondés mientras trabajás</div>
+            <div class="pain-card__desc">Dejás lo que estás haciendo para contestar un mensaje, y después cuesta volver a concentrarse.</div>
           </div>
-          <div class="problem-card">
-            <div class="problem-card__icon">🕐</div>
-            <div class="problem-card__title">Perdés tiempo en agendar</div>
-            <div class="problem-card__desc">Cada turno te lleva 5 minutos de mensajes de ida y vuelta. Eso suma horas por semana.</div>
+          <div class="pain-card">
+            <div class="pain-card__icon">🌙</div>
+            <div class="pain-card__title">Te escriben fuera de horario</div>
+            <div class="pain-card__desc">Clientes que preguntan a la noche o el fin de semana, cuando vos ya no estás trabajando.</div>
           </div>
-          <div class="problem-card">
-            <div class="problem-card__icon">❌</div>
-            <div class="problem-card__title">Turnos que no llegan</div>
-            <div class="problem-card__desc">Clientes que confirman por WhatsApp pero no aparecen. Y no te avisan con tiempo.</div>
+          <div class="pain-card">
+            <div class="pain-card__icon">⏳</div>
+            <div class="pain-card__title">Perdés consultas por responder tarde</div>
+            <div class="pain-card__desc">A veces no llegás a contestar a tiempo y el cliente ya consiguió otro lado.</div>
+          </div>
+          <div class="pain-card">
+            <div class="pain-card__icon">🔁</div>
+            <div class="pain-card__title">Contestás lo mismo todos los días</div>
+            <div class="pain-card__desc">Precios, horarios, dirección, servicios. Las mismas preguntas, una y otra vez.</div>
+          </div>
+          <div class="pain-card">
+            <div class="pain-card__icon">❌</div>
+            <div class="pain-card__title">Te olvidás de confirmar turnos</div>
+            <div class="pain-card__desc">Y aparecen clientes que no vienen, o se confunden de horario. Perdés tiempo y plata.</div>
+          </div>
+          <div class="pain-card">
+            <div class="pain-card__icon">🛑</div>
+            <div class="pain-card__title">El celular te interrumpe todo el día</div>
+            <div class="pain-card__desc">Cada notificación te saca del trabajo importante. El día se te escapa respondiendo mensajes.</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Cómo funciona -->
-    <section class="section" id="como-funciona" style="background: var(--accent-light);">
+    <!-- Solution -->
+    <section class="section" style="background: var(--accent-light); padding-top: 80px; padding-bottom: 80px;">
       <div class="container">
         <div class="section__header">
-          <span class="section__label">Cómo funciona</span>
-          <h2 class="section__title">Setup en 4 pasos simples</h2>
+          <span class="section__label">La solución</span>
+          <h2 class="section__title">MiCita resuelve todo eso automáticamente</h2>
+          <p class="section__subtitle">Tu secretaria virtual atiende por WhatsApp como si fuera parte de tu equipo.</p>
         </div>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-card__number">1</div>
-            <div class="step-card__title">Nos contás tu negocio</div>
-            <div class="step-card__desc">Nos decís qué servicios ofrecés, en qué horarios atendés, y cómo querés que responda el bot.</div>
+        <div class="solution-grid">
+          <div class="solution-card">
+            <div class="solution-card__icon">🙋‍♀️</div>
+            <div class="solution-card__title">Ella responde por vos</div>
+            <div class="solution-card__desc">Mientras vos trabajás, MiCita atiende a tus clientes en WhatsApp sin interrumpirte.</div>
           </div>
-          <div class="step-card">
-            <div class="step-card__number">2</div>
-            <div class="step-card__title">Configuramos todo</div>
-            <div class="step-card__desc">Nosotros cargamos tus servicios, precios, horarios y conectamos tu WhatsApp Business.</div>
+          <div class="solution-card">
+            <div class="solution-card__icon">🌙</div>
+            <div class="solution-card__title">Atiende 24/7</div>
+            <div class="solution-card__desc">Contestas de noche, fin de semana o feriado. Nunca más una consulta sin respuesta.</div>
           </div>
-          <div class="step-card">
-            <div class="step-card__number">3</div>
-            <div class="step-card__title">Conectamos el calendario</div>
-            <div class="step-card__desc">Tu Google Calendar se sincroniza automáticamente. Los turnos aparecen ahí en tiempo real.</div>
+          <div class="solution-card">
+            <div class="solution-card__icon">⚡</div>
+            <div class="solution-card__title">Responde al instante</div>
+            <div class="solution-card__desc">Tus clientes reciben atención inmediata. Más consultas convertidas en reservas.</div>
           </div>
-          <div class="step-card">
-            <div class="step-card__number">4</div>
-            <div class="step-card__title">Empezás a recibir turnos</div>
-            <div class="step-card__desc">Los clientes escriben por WhatsApp y el bot agenda solo. Vos solo mirás el calendario.</div>
+          <div class="solution-card">
+            <div class="solution-card__icon">📋</div>
+            <div class="solution-card__title">Responde preguntas frecuentes</div>
+            <div class="solution-card__desc">Precios, servicios, dirección, horarios. Todo automático, sin que vos repitas.</div>
+          </div>
+          <div class="solution-card">
+            <div class="solution-card__icon">✅</div>
+            <div class="solution-card__title">Confirma y agenda sola</div>
+            <div class="solution-card__desc">Toma turnos, los guarda en tu calendario y confirma automáticamente.</div>
+          </div>
+          <div class="solution-card">
+            <div class="solution-card__icon">🧘</div>
+            <div class="solution-card__title">Vos trabajás tranquilo</div>
+            <div class="solution-card__desc">Menos tareas administrativas, más tiempo para lo que realmente hace crecer tu negocio.</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Beneficios -->
-    <section class="section" id="beneficios">
+    <!-- Before / After -->
+    <section class="section before-after" id="beneficios">
       <div class="container">
         <div class="section__header">
-          <span class="section__label">Beneficios</span>
-          <h2 class="section__title">¿Qué cambia en tu negocio?</h2>
+          <span class="section__label">Antes y después</span>
+          <h2 class="section__title">¿Qué cambia en tu día a día?</h2>
+          <p class="section__subtitle">No te mostramos funciones. Te mostramos cómo se transforma tu trabajo.</p>
         </div>
-        <div class="benefits-grid">
-          <div class="benefit-card">
-            <div class="benefit-card__icon">🌙</div>
-            <div class="benefit-card__title">Atendé 24/7 sin estar</div>
-            <div class="benefit-card__desc">Los clientes agendan mientras dormís. El bot nunca descansa ni se olvida de responder.</div>
+        <div class="before-after__grid">
+          <div class="ba-card">
+            <div class="ba-card__title ba-card__title--before">❌ Antes</div>
+            <ul class="ba-card__list">
+              <li>Respondés mensajes manualmente todo el día.</li>
+              <li>Anotás turnos por chat y a veces se te pasa alguno.</li>
+              <li>Perdés consultas que llegan fuera de horario.</li>
+              <li>Estás pendiente del celular incluso cuando no trabajás.</li>
+              <li>Repetís las mismas respuestas una y otra vez.</li>
+            </ul>
           </div>
-          <div class="benefit-card">
-            <div class="benefit-card__icon">⚡</div>
-            <div class="benefit-card__title">Respondé en segundos</div>
-            <div class="benefit-card__desc">No más "Hola, ¿en qué puedo ayudarte?" esperando 3 horas. El bot responde al instante.</div>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-card__icon">📅</div>
-            <div class="benefit-card__title">Sincronizado con tu calendario</div>
-            <div class="benefit-card__desc">Google Calendar se actualiza solo. Vos y tu equipo ven los turnos en tiempo real.</div>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-card__icon">🎨</div>
-            <div class="benefit-card__title">Tu marca, tu voz</div>
-            <div class="benefit-card__desc">El bot habla como vos. Le ponés el nombre que quieras, el tono que prefieras, tu estilo.</div>
+          <div class="ba-card">
+            <div class="ba-card__title ba-card__title--after">✅ Después</div>
+            <ul class="ba-card__list">
+              <li>Tu secretaria virtual atiende automáticamente 24/7.</li>
+              <li>Tu agenda se organiza sola y sincroniza con Google Calendar.</li>
+              <li>Ninguna consulta se queda sin respuesta, a cualquier hora.</li>
+              <li>Podés desconectarte porque sabés que MiCita está atendiendo.</li>
+              <li>Recuperás horas de trabajo y atendés más clientes.</li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Para quién es -->
+    <!-- Demo -->
+    <section class="section demo-section" id="demo">
+      <div class="container demo__layout">
+        <div class="demo__content">
+          <div class="section__header">
+            <span class="section__label">Ejemplo</span>
+            <h2 class="section__title">Mirá cómo atiende Herminda en un spa</h2>
+            <p class="section__subtitle">Herminda es solo una demo. Tu negocio recibe una secretaria con tu nombre, tus servicios y tu forma de hablar.</p>
+          </div>
+          <ul class="demo__bullets">
+            <li>Responde consultas de servicios y precios.</li>
+            <li>Agenda turnos automáticamente.</li>
+            <li>Confirma citas y envía recordatorios.</li>
+            <li>Deriva a una persona cuando es necesario.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="phone-preview">
+            <div class="phone-preview__header">
+              <div class="phone-preview__avatar">🧙‍♀️</div>
+              <div>
+                <div class="phone-preview__name">Herminda</div>
+                <div class="phone-preview__status">● En línea</div>
+              </div>
+            </div>
+            <div class="chat-bubble">¿Cuánto sale la limpieza facial?</div>
+            <div class="chat-bubble chat-bubble--bot">La Limpieza Facial Profunda está $35.000. La sesión dura 50 minutos. ¿Querés que te agende un turno? 😊</div>
+            <div class="chat-bubble">Sí, para el jueves a la tarde</div>
+            <div class="chat-bubble chat-bubble--bot">Perfecto. Tenemos disponible el jueves 18 a 16:00hs o 17:30hs. ¿Cuál preferís?</div>
+            <div class="chat-bubble">16:00</div>
+            <div class="chat-bubble chat-bubble--bot">¡Listo! 📅 Te confirmo el turno para el jueves 18 a las 16:00hs. Te escribo un día antes para recordarte. ¡Gracias!</div>
+          </div>
+          <p class="phone-preview__caption">Conversación simulada. Tu secretaria se adapta a tu negocio.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Industries -->
     <section class="section" id="industrias" style="background: var(--accent-light);">
       <div class="container">
         <div class="section__header">
           <span class="section__label">Para quién es</span>
-          <h2 class="section__title">Ideal para cualquier negocio con turnos</h2>
+          <h2 class="section__title">Ideal para cualquier negocio que reciba consultas por WhatsApp</h2>
+          <p class="section__subtitle">No importa el rubro. Si tus clientes escriben por WhatsApp, MiCita puede atenderlos.</p>
         </div>
         <div class="industries-grid">
           <div class="industry-card">
             <div class="industry-card__icon">💇‍♀️</div>
             <div class="industry-card__title">Peluquerías</div>
-            <div class="industry-card__desc">Cortes, color, peinados</div>
           </div>
           <div class="industry-card">
             <div class="industry-card__icon">💆‍♂️</div>
-            <div class="industry-card__title">Spas & Centros de estética</div>
-            <div class="industry-card__desc">Masajes, faciales, corporales</div>
+            <div class="industry-card__title">Spas & Estética</div>
           </div>
           <div class="industry-card">
             <div class="industry-card__icon">✂️</div>
             <div class="industry-card__title">Barberías</div>
-            <div class="industry-card__desc">Cortes, barba, tratamientos</div>
           </div>
           <div class="industry-card">
             <div class="industry-card__icon">💅</div>
             <div class="industry-card__title">Nail Studios</div>
-            <div class="industry-card__desc">Manicura, pedicura, nail art</div>
-          </div>
-          <div class="industry-card">
-            <div class="industry-card__icon">🧘‍♀️</div>
-            <div class="industry-card__title">Yoga & Pilates</div>
-            <div class="industry-card__desc">Clases, talleres, privados</div>
           </div>
           <div class="industry-card">
             <div class="industry-card__icon">🦷</div>
-            <div class="industry-card__title">Consultorios</div>
-            <div class="industry-card__desc">Odontología, kinesiología, etc.</div>
+            <div class="industry-card__title">Dentistas</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🧠</div>
+            <div class="industry-card__title">Psicólogos</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🥗</div>
+            <div class="industry-card__title">Nutricionistas</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🏃</div>
+            <div class="industry-card__title">Kinesiólogos</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🐾</div>
+            <div class="industry-card__title">Veterinarias</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">⚖️</div>
+            <div class="industry-card__title">Estudios jurídicos</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">📊</div>
+            <div class="industry-card__title">Contadores</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🎓</div>
+            <div class="industry-card__title">Profesores</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">💃</div>
+            <div class="industry-card__title">Academias</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🧰</div>
+            <div class="industry-card__title">Talleres</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🤝</div>
+            <div class="industry-card__title">Consultores</div>
+          </div>
+          <div class="industry-card">
+            <div class="industry-card__icon">🏢</div>
+            <div class="industry-card__title">Servicios profesionales</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Pricing -->
-    <section class="section" id="precios">
+    <!-- How it works -->
+    <section class="section" id="como-funciona">
       <div class="container">
         <div class="section__header">
-          <span class="section__label">Planes</span>
-          <h2 class="section__title">Inversión simple, sin sorpresas</h2>
-          <p class="section__subtitle">Setup incluido. Cancelable cuando quieras. Sin permanencia.</p>
+          <span class="section__label">Cómo funciona</span>
+          <h2 class="section__title">Tu secretaria virtual lista en 4 pasos</h2>
+          <p class="section__subtitle">Nosotros hacemos la configuración. Vos solo empezás a atender.</p>
         </div>
-        <div class="pricing-grid">
-          <div class="pricing-card">
-            <div class="pricing-card__name">Básico</div>
-            <div class="pricing-card__price">$80.000<span>/mes</span></div>
-            <div class="pricing-card__setup">Setup: $150.000</div>
-            <ul class="pricing-card__features">
-              <li>Bot con tu menú de servicios</li>
-              <li>Agendamiento automático</li>
-              <li>Panel de administración</li>
-              <li>Hasta 5 servicios</li>
-              <li>Soporte por email</li>
-            </ul>
-            <a href="#contacto" class="btn btn--secondary btn--block">Elegir plan</a>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-card__number">1</div>
+            <div class="step-card__title">Hablamos de tu negocio</div>
+            <div class="step-card__desc">Nos contás qué servicios ofrecés, tus horarios y cómo querés que atienda tu secretaria.</div>
           </div>
-          <div class="pricing-card pricing-card--featured">
-            <div class="pricing-card__name">Pro</div>
-            <div class="pricing-card__price">$180.000<span>/mes</span></div>
-            <div class="pricing-card__setup">Setup: $300.000</div>
-            <ul class="pricing-card__features">
-              <li>Todo lo del plan Básico</li>
-              <li>Google Calendar sincronizado</li>
-              <li>Recordatorios automáticos</li>
-              <li>Cancelar / reprogramar turnos</li>
-              <li>Hasta 10 servicios</li>
-              <li>Human handoff (tomar control)</li>
-              <li>Soporte por WhatsApp</li>
-            </ul>
-            <a href="#contacto" class="btn btn--primary btn--block">Elegir plan</a>
+          <div class="step-card">
+            <div class="step-card__number">2</div>
+            <div class="step-card__title">Creamos tu secretaria</div>
+            <div class="step-card__desc">La personalizamos con tu marca, tu voz, tus servicios y tus respuestas frecuentes.</div>
           </div>
-          <div class="pricing-card">
-            <div class="pricing-card__name">Enterprise</div>
-            <div class="pricing-card__price">$350.000<span>/mes</span></div>
-            <div class="pricing-card__setup">Setup: $500.000</div>
-            <ul class="pricing-card__features">
-              <li>Todo lo del plan Pro</li>
-              <li>Servicios ilimitados</li>
-              <li>Múltiples calendarios</li>
-              <li>Personalización completa</li>
-              <li>Soporte prioritario</li>
-              <li>Ajustes ilimitados</li>
-            </ul>
-            <a href="#contacto" class="btn btn--secondary btn--block">Elegir plan</a>
+          <div class="step-card">
+            <div class="step-card__number">3</div>
+            <div class="step-card__title">La conectamos</div>
+            <div class="step-card__desc">Vinculamos tu WhatsApp Business y tu Google Calendar para que todo quede sincronizado.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card__number">4</div>
+            <div class="step-card__title">Empezás a atender</div>
+            <div class="step-card__desc">Tus clientes escriben por WhatsApp y tu secretaria los atiende automáticamente.</div>
           </div>
         </div>
       </div>
@@ -831,18 +906,18 @@
     <section class="cta-section" id="contacto">
       <div class="container">
         <div class="section__header">
-          <span class="section__label" style="color: rgba(255,255,255,0.8);">Empezá hoy</span>
-          <h2 class="section__title">¿Querés ver cómo funciona en tu negocio?</h2>
-          <p class="section__subtitle">Te muestro en 20 minutos. Si te sirve, lo implementamos. Si no, no pasa nada.</p>
+          <span class="section__label">Empezá hoy</span>
+          <h2 class="section__title">¿Querés dejar de responder WhatsApp manualmente?</h2>
+          <p class="section__subtitle">Hablemos. En 20 minutos te muestro cómo funciona MiCita en tu negocio. Sin compromiso.</p>
         </div>
         <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-          <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20agendar%20una%20demo" class="btn btn--primary" style="background: #fff; color: var(--accent);">
+          <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20que%20MiCita%20atienda%20mis%20consultas" class="btn btn--white">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-            Escribirme por WhatsApp
+            Quiero mi secretaria virtual
           </a>
           <a href="mailto:rodrigo.desarrollador@gmail.com" class="btn btn--secondary">Mandame un email</a>
         </div>
-        <p style="margin-top: 32px; font-size: 0.9rem; opacity: 0.8;">
+        <p style="margin-top: 32px; font-size: 0.9rem; opacity: 0.9;">
           También podés escribirme directo al +54 9 2477 614405
         </p>
       </div>
@@ -855,7 +930,7 @@
     </div>
   </footer>
 
-  <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20agendar%20una%20demo" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+  <a href="https://wa.me/5492477614405?text=Hola%20Rodrigo%2C%20vi%20MiCita%20y%20quiero%20que%20MiCita%20atienda%20mis%20consultas" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </a>
 
