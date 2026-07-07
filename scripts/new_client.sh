@@ -93,7 +93,7 @@ set -euo pipefail
 # ============================
 # CONFIG
 # ============================
-TEMPLATE_DIR="/mnt/data/rodrigo-bot-template"  # ruta al codigo base (este repo)
+TEMPLATE_DIR="/mnt/data/cliente-nspa"  # ruta al codigo base (template maestro)
 CLIENTS_BASE_DIR="/mnt/data"
 CADDYFILE="/mnt/data/boston-ai/Caddyfile"
 CADDY_NETWORK="boston-ai_default"
@@ -291,6 +291,7 @@ function get_template_val() {
 META_ACCESS_TOKEN="${META_ACCESS_TOKEN:-}"
 META_WABA_ID="${META_WABA_ID:-}"
 META_APP_SECRET="${META_APP_SECRET:-}"
+META_VERIFY_TOKEN="${META_VERIFY_TOKEN:-}"
 
 [[ -z "$LLM_KEY" ]] && LLM_KEY=$(get_template_val "LLM_API_KEY")
 [[ -z "$LLM_URL" ]] && LLM_URL=$(get_template_val "LLM_BASE_URL")
