@@ -1,5 +1,9 @@
 .env
+.env.local
+scripts/.env
+scripts/.env.local
 __pycache__/
+output/kling_videos/
 *.pyc
 *.pyo
 *.egg-info/

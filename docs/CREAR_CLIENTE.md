@@ -12,7 +12,7 @@
 
 ```bash
 ssh -i ~/.ssh/boston_vps ubuntu@167.114.96.29
-cd /mnt/data/cliente-nspa
+cd /mnt/data/rodrigo-bot-template
 chmod +x scripts/new_client.sh
 
 ./scripts/new_client.sh \
@@ -51,7 +51,7 @@ chmod +x scripts/new_client.sh
 ## Que hace el script automaticamente
 
 1. Crea `/mnt/data/cliente-{slug}/`
-2. Copia codigo del template (`app/`, `ui/`, scripts, Dockerfile) desde `cliente-nspa/`
+2. Copia codigo del template (`app/`, `ui/`, scripts, Dockerfile) desde `rodrigo-bot-template/`
 3. Genera `.env` con valores del cliente
 4. Genera `docker-compose.yml` con nombres unicos de contenedores
 5. Crea documentos iniciales vacios + `system_prompt.txt`
@@ -94,10 +94,10 @@ cd /mnt/data/cliente-{slug} && docker compose down && docker compose up -d
 # NOTA: docker compose restart NO lee cambios de .env
 
 # Listar todos los clientes
-cd /mnt/data/cliente-nspa && ./scripts/list_clients.sh
+cd /mnt/data/rodrigo-bot-template && ./scripts/list_clients.sh
 
 # Eliminar cliente (CUIDADO)
-cd /mnt/data/cliente-nspa && ./scripts/remove_client.sh --slug {slug} --yes
+cd /mnt/data/rodrigo-bot-template && ./scripts/remove_client.sh --slug {slug} --yes
 ```
 
 > **Nota para Windows/PowerShell:** El operador `&&` no funciona en PowerShell. Usar `;` en su lugar o ejecutar comandos separados. Ejemplo:
@@ -110,7 +110,7 @@ cd /mnt/data/cliente-nspa && ./scripts/remove_client.sh --slug {slug} --yes
 
 ## Notas importantes
 
-- **Template:** El codigo base esta en `/mnt/data/cliente-nspa/`. Si se modifica codigo localmente, subirlo antes con `scp`.
+- **Template:** El codigo base esta en `/mnt/data/rodrigo-bot-template/`. Si se modifica codigo localmente, subirlo antes con `scp`.
 - **Recursos:** Cada cliente consume ~300MB de RAM. Verificar con `./scripts/list_clients.sh`.
 - **Dominio:** El DNS wildcard `*.asistentebot.com.ar` ya apunta al VPS. No hay que configurar nada en Cloudflare.
 - **Router:** Los webhooks de Meta llegan a `https://asistentebot.com.ar/webhook` y el router los redirige a cada instancia.
@@ -135,7 +135,7 @@ Si ves este error en los logs, significa que las credenciales de Meta no se copi
 **Solucion:** Verificar que el template `.env` tenga las credenciales completas:
 ```bash
 # Verificar que las claves existen (sin mostrar valores)
-grep '^META_' /mnt/data/cliente-nspa/.env | sed 's/=.*/=[CONFIGURADO]/'
+grep '^META_' /mnt/data/rodrigo-bot-template/.env | sed 's/=.*/=[CONFIGURADO]/'
 ```
 
 ### Caddy no redirige el dominio
