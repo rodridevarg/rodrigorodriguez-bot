@@ -24,5 +24,6 @@ ngrok.zip
 
 # Credenciales de Google Cloud (no subir al repo)
 *.json
+!opencode.json
 guild-f42e3*.json
 nspa-*.json

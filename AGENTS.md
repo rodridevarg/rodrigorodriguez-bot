@@ -272,6 +272,16 @@ Tablas principales:
 - **Panel admin requiere F5** — para ver respuestas del bot despues de que el worker termina
   (el worker corre en un contenedor separado y no puede notificar al web directamente)
 
+## MCP de Meta Developer Tools
+
+El proyecto incluye configuración de OpenCode para conectar el MCP de Meta Developer Tools. Esto permite diagnosticar y gestionar webhooks, apps y números de teléfono de Meta desde OpenCode.
+
+- Configuración: `opencode.json`
+- Skill: `.opencode/skills/meta-devtools/SKILL.md`
+- Se activa automáticamente al hablar de Meta, WhatsApp, webhooks o WABA.
+
+La primera vez que se use, OpenCode pedirá autenticación OAuth con Meta.
+
 ---
 
 *Ultima actualizacion: 2026-06-01*
