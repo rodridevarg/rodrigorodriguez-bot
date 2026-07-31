@@ -282,6 +282,15 @@ El proyecto incluye configuración de OpenCode para conectar el MCP de Meta Deve
 
 La primera vez que se use, OpenCode pedirá autenticación OAuth con Meta.
 
+## Notas de Git y GitHub CLI
+
+- El repositorio remoto es: `https://github.com/rodridevarg/rodrigorodriguez-bot.git`
+- En este entorno pueden existir varias cuentas de `gh`. Antes de hacer `git push`, asegurate de que la cuenta activa sea `rodridevarg`:
+  ```bash
+  gh auth switch -u rodridevarg
+  ```
+- Si el push falla con error 403, verificá `gh auth status` y cambiá a la cuenta correcta.
+
 ---
 
 *Ultima actualizacion: 2026-06-01*
