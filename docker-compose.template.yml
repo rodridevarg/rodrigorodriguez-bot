@@ -1,9 +1,17 @@
 # Template docker-compose para multi-cliente
 # Reemplazar {{SLUG}} por el slug del cliente al crear instancia
+#
+# IMPORTANTE: usa la imagen base compartida asistentebot-base:latest.
+# NO hace build por cliente (ahorra ~2GB de librerias y 15 min por cliente).
+# Si la imagen no existe, construirla primero:
+#   cd /mnt/data/rodrigo-bot-template
+#   docker build -f Dockerfile.base -t asistentebot-base:latest .
+#
+# Los datos del cliente viven en ./data (bind mount), editables sin rebuild.
 
 services:
   web:
-    build: .
+    image: asistentebot-base:latest
     container_name: {{SLUG}}-web
     restart: unless-stopped
     env_file:
@@ -11,7 +19,7 @@ services:
     environment:
       - APP_DB_PATH=/app/data/app.sqlite3
     volumes:
-      - {{SLUG}}-data:/app/data
+      - ./data:/app/data
     command: >
       python -m uvicorn app.main:app
       --host 0.0.0.0
@@ -27,7 +35,7 @@ services:
       - boston-ai_default
 
   worker:
-    build: .
+    image: asistentebot-base:latest
     container_name: {{SLUG}}-worker
     restart: unless-stopped
     env_file:
@@ -35,7 +43,7 @@ services:
     environment:
       - APP_DB_PATH=/app/data/app.sqlite3
     volumes:
-      - {{SLUG}}-data:/app/data
+      - ./data:/app/data
     command: python scripts/run_worker.py
     depends_on:
       web:
@@ -44,11 +52,6 @@ services:
       replicas: 1
     networks:
       - boston-ai_default
-
-volumes:
-  {{SLUG}}-data:
-    name: {{SLUG}}-data
-    driver: local
 
 networks:
   boston-ai_default:

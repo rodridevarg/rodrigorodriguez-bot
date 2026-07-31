@@ -25,9 +25,17 @@ chmod +x scripts/new_client.sh
   --meta-phone-number-id "ID_DE_META"
 ```
 
-> **IMPORTANTE:** El primer build de Docker puede tardar **10-15 minutos** porque descarga librerias grandes (PyTorch, ChromaDB, etc.). No interrumpir el script. Si se corta, ejecutar manualmente:
+> **IMPORTANTE:** Los clientes ya NO hacen build de Docker. Todos usan la imagen
+> compartida `asistentebot-base:latest` (ver `docs/ARQUITECTURA_DOCKER.md`).
+> Levantar un cliente tarda segundos, no 10-15 minutos.
+> **Requisito previo:** la imagen base debe existir. Verificar con:
 > ```bash
-> cd /mnt/data/cliente-{slug} && docker compose up -d --build
+> docker images | grep asistentebot-base
+> ```
+> Si no existe (o cambio el codigo), construirla primero:
+> ```bash
+> cd /mnt/data/rodrigo-bot-template
+> sudo docker build -f Dockerfile.base -t asistentebot-base:latest .
 > ```
 
 ---
@@ -119,14 +127,17 @@ cd /mnt/data/rodrigo-bot-template && ./scripts/remove_client.sh --slug {slug} --
 
 ## Troubleshooting
 
-### El script se corto durante el build de Docker
+### El script se corto durante el arranque
 
-Esto es normal en el primer build. Las librerias (PyTorch, ChromaDB, etc.) pesan ~2GB y tardan en descargarse.
+Con la imagen base compartida esto es raro (no hay build pesado). Si falla:
 
 **Solucion:**
 ```bash
-cd /mnt/data/cliente-{slug} && docker compose up -d --build
+cd /mnt/data/cliente-{slug} && docker compose up -d
 ```
+
+Si el error es "image asistentebot-base:latest not found", construir la imagen
+base primero (ver `docs/ARQUITECTURA_DOCKER.md`).
 
 ### El contenedor web no inicia (ValueError: Faltan META_ACCESS_TOKEN)
 

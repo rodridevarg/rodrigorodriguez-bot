@@ -65,6 +65,8 @@ scripts/            # Utilitarios
   stop.ps1          # Detener FastAPI (Windows local)
   status.ps1        # Ver estado (Windows local)
   run_chat.ps1      # Chat por consola (Windows local)
+Dockerfile.base     # Imagen base compartida (todos los clientes)
+docker-compose.template.yml  # Template compose (usa imagen base, sin build)
 ui/                 # Chat web estatico
   index.html
   admin/
@@ -117,9 +119,20 @@ docs/
 
 ## Docker
 
+Todos los clientes usan la **imagen base compartida** `asistentebot-base:latest`.
+Los clientes NO hacen build propio.
+
 ```bash
-docker compose up -d --build
+# Build de la imagen base (una sola vez, o cuando cambia el codigo)
+cd /mnt/data/rodrigo-bot-template
+sudo docker build -f Dockerfile.base -t asistentebot-base:latest .
+
+# Levantar un cliente (segundos, sin build)
+cd /mnt/data/cliente-{slug} && sudo docker compose up -d
 ```
+
+> Ver `docs/ARQUITECTURA_DOCKER.md` para el flujo completo de actualizacion de codigo
+> y mantenimiento del disco. Ver `docs/CLIENTES.md` para la lista de clientes activos.
 
 ## Deploy en VPS
 
@@ -267,7 +280,8 @@ Tablas principales:
 
 ### Problemas conocidos
 
-- **Disco del VPS casi lleno** — no se puede instalar `git`, deploys manuales con `scp`
+- **Espacio en disco del VPS** — se libero migrando a imagen base compartida
+  (de 9.4GB a ~27GB libres). Mantener con `docker system df`. Ver `docs/ARQUITECTURA_DOCKER.md`
 - **AudioContext bloqueado** — Chrome requiere interaccion del usuario antes de reproducir sonidos
 - **Panel admin requiere F5** — para ver respuestas del bot despues de que el worker termina
   (el worker corre en un contenedor separado y no puede notificar al web directamente)
@@ -293,4 +307,4 @@ La primera vez que se use, OpenCode pedirá autenticación OAuth con Meta.
 
 ---
 
-*Ultima actualizacion: 2026-06-01*
+*Ultima actualizacion: 2026-07-31*

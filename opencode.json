@@ -3,6 +3,8 @@
   "instructions": [
     "AGENTS.md",
     "docs/CREAR_CLIENTE.md",
+    "docs/CLIENTES.md",
+    "docs/ARQUITECTURA_DOCKER.md",
     "docs/VPS_DEPLOY.md",
     "docs/WEBHOOK_ROUTER.md"
   ],

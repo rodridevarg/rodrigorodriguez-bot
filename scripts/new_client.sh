@@ -93,7 +93,7 @@ set -euo pipefail
 # ============================
 # CONFIG
 # ============================
-TEMPLATE_DIR="/mnt/data/cliente-nspa"  # ruta al codigo base (template maestro)
+TEMPLATE_DIR="/mnt/data/rodrigo-bot-template"  # ruta al codigo base (template maestro)
 CLIENTS_BASE_DIR="/mnt/data"
 CADDYFILE="/mnt/data/boston-ai/Caddyfile"
 CADDY_NETWORK="boston-ai_default"
