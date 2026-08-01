@@ -27,6 +27,12 @@ BOT_NAME = os.getenv("BOT_NAME", "Asistente Virtual")
 BOT_DESCRIPTION = os.getenv("BOT_DESCRIPTION", "Asistente automatizado por WhatsApp")
 CONTACT_PHONE = os.getenv("CONTACT_PHONE", "")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
+SALES_CONTACT_PHONE = os.getenv("SALES_CONTACT_PHONE", "")
+SALES_DEMO_LINK = os.getenv("SALES_DEMO_LINK", "")
+SALES_AUTO_HANDOFF = os.getenv("SALES_AUTO_HANDOFF", "false").lower() == "true"
+
+# Modo comercial: si es false, el bot NO agenda turnos (bot de ventas/captacion)
+TURNOS_ENABLED = os.getenv("TURNOS_ENABLED", "true").lower() == "true"
 FALLBACK_MESSAGE = os.getenv(
     "FALLBACK_MESSAGE",
     "No encontré información sobre eso en mi base de conocimiento. Te sugiero contactar para más detalles.",

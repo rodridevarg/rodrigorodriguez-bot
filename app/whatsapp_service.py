@@ -6,6 +6,11 @@ from app.config import (
     CONVERSATION_MEMORY_MAX_TURNS,
     HANDOFF_TRANSITION_MESSAGE,
     CONTACT_PHONE,
+    CONTACT_EMAIL,
+    SALES_CONTACT_PHONE,
+    SALES_DEMO_LINK,
+    SALES_AUTO_HANDOFF,
+    TURNOS_ENABLED,
     FALLBACK_MESSAGE,
     BUSINESS_ADDRESS,
     BUSINESS_NAME,
@@ -101,6 +106,21 @@ def _is_about_precios(text: str) -> bool:
 
 def _is_about_ubicacion(text: str) -> bool:
     keywords = ["direccion", "dirección", "ubicacion", "ubicación", "donde", "dónde", "como llegar", "cómo llegar", "dire", "santa fe", "dirección", "calle"]
+    clean = text.lower()
+    return any(k in clean for k in keywords)
+
+
+def _is_about_demo_or_sales(text: str) -> bool:
+    """Detecta intención de demo, venta, anuncio o interés comercial."""
+    keywords = [
+        "demo", "demostración", "demostracion", "quiero una demo", "ver una demo",
+        "me interesa", "para mi negocio", "quiero contratar", "quiero implementar",
+        "reunión", "reunion", "charlemos", "hablar con alguien", "hablar con rodrigo",
+        "vender mi servicio", "quiero el bot", "quiero micita", "me gustaría recibir",
+        "me gustaria recibir", "vi el anuncio", "vi la publicidad", "vi el flyer",
+        "publicidad", "anuncio", "flyer", "promocion", "promoción",
+        "hablar con una persona", "persona real", "asesor", "humano",
+    ]
     clean = text.lower()
     return any(k in clean for k in keywords)
 
@@ -467,6 +487,32 @@ def _format_services_menu() -> str:
     return "\n".join(lines)
 
 
+def _precios_query() -> str:
+    """Query de precios según el modo del bot."""
+    if not TURNOS_ENABLED:
+        return "¿Cuánto cuesta el Plan Base y qué incluye?"
+    return "¿Cuánto cuestan los tratamientos y servicios?"
+
+
+def _build_demo_response() -> str:
+    """Construye mensaje de oferta de demo/reunión comercial."""
+    lines = [
+        f"¡Hola! Me encanta que te interese {BUSINESS_NAME}. 😊",
+        "",
+        "Para coordinar una demo o reunión sin compromiso, escribinos directamente:",
+        "",
+    ]
+    if SALES_DEMO_LINK:
+        lines.append(f"👉 {SALES_DEMO_LINK}")
+    elif SALES_CONTACT_PHONE:
+        lines.append(f"👉 WhatsApp: {SALES_CONTACT_PHONE}")
+    if CONTACT_EMAIL:
+        lines.append(f"📧 Email: {CONTACT_EMAIL}")
+    lines.append("")
+    lines.append("¿De qué tipo de negocio se trata? Así te pasamos info más específica.")
+    return "\n".join(lines)
+
+
 # ============================
 # WHATSAPP SERVICE
 # ============================
@@ -552,7 +598,15 @@ class WhatsAppService:
             return self._send_outbound(inbound_id, to_number, body, provider)
 
     def _send_greeting_with_menu(self, inbound_id: int, to_number: str, provider: str) -> str:
-        """Envia saludo con menu de texto numerado (1-7)."""
+        """Envia saludo. En modo comercial (sin turnos) es un saludo de ventas."""
+        if not TURNOS_ENABLED:
+            body = (
+                f"¡Hola! 😊 Soy la asistente virtual de {BUSINESS_NAME}.\n\n"
+                f"Le damos a los negocios una secretaria que atiende su WhatsApp 24/7: "
+                f"responde consultas, confirma turnos y agenda citas automáticamente.\n\n"
+                f"¿De qué tipo de negocio se trata? Así te cuento cómo te puede ayudar."
+            )
+            return self._send_outbound(inbound_id, to_number, body, provider)
         body = (
             f"¡Hola! ✨ Soy Herminda, tu guía en {BUSINESS_NAME}.\n\n"
             f"¿En qué puedo ayudarte? 👇\n\n"
@@ -1151,26 +1205,34 @@ class WhatsAppService:
         
         if button_id:
             if button_id == "btn_turno":
+                if not TURNOS_ENABLED:
+                    query = "¿Cómo funciona el servicio y cómo empiezo?"
+                    store.mark_inbound_done(inbound["provider_message_id"])
+                    return f"[RAG como-funciona] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
                 _save_turno_state(from_number, "ask_service", client_phone=from_number)
                 body = _format_services_menu()
                 store.mark_inbound_done(inbound["provider_message_id"])
                 return f"[TURNO FLOW] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
             
             if button_id == "btn_servicios":
+                if not TURNOS_ENABLED:
+                    query = "¿Qué servicios y funcionalidades incluye?"
+                    store.mark_inbound_done(inbound["provider_message_id"])
+                    return f"[RAG servicios] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
                 body = _format_services_menu()
                 store.mark_inbound_done(inbound["provider_message_id"])
                 return f"[SERVICES] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
             
             if button_id == "btn_precios":
-                query = "¿Cuánto cuestan los tratamientos y servicios?"
+                query = _precios_query()
                 store.mark_inbound_done(inbound["provider_message_id"])
                 return f"[RAG precios] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
         
         # =====================================================================
-        # 2. DETECTAR NÚMERO DE MENÚ (1-7)
+        # 2. DETECTAR NÚMERO DE MENÚ (1-7) - solo si hay turnos habilitados
         # =====================================================================
         menu_num = self._detect_menu_number(text)
-        if menu_num:
+        if menu_num and TURNOS_ENABLED:
             if menu_num == 1:  # Sacar turno
                 _save_turno_state(from_number, "ask_service", client_phone=from_number)
                 body = _format_services_menu()
@@ -1183,7 +1245,7 @@ class WhatsAppService:
                 return f"[SERVICES] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
             
             if menu_num == 3:  # Consultar precios
-                query = "¿Cuánto cuestan los tratamientos y servicios?"
+                query = _precios_query()
                 store.mark_inbound_done(inbound["provider_message_id"])
                 return f"[RAG precios] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
             
@@ -1208,45 +1270,70 @@ class WhatsAppService:
         # 3. MENÚ RÁPIDO (texto)
         # =====================================================================
         if _is_menu_request(text):
-            body = (
-                f"¿En qué puedo ayudarte? 👇\n\n"
-                f"1️⃣ Sacar turno\n"
-                f"2️⃣ Ver servicios\n"
-                f"3️⃣ Consultar precios\n"
-                f"4️⃣ Cómo llegar\n"
-                f"5️⃣ Mis turnos\n"
-                f"6️⃣ Cancelar turno\n"
-                f"7️⃣ Hablar con humano\n\n"
-                f"Respondé con el número (1, 2, 3...)"
-            )
+            if not TURNOS_ENABLED:
+                body = (
+                    f"¿Sobre qué querés saber más? Escribime tu consulta:\n\n"
+                    f"• Cómo funciona {BUSINESS_NAME}\n"
+                    f"• Precios\n"
+                    f"• Cómo empezar\n\n"
+                    f"O escribí *demo* y coordinamos una reunión sin compromiso. 😊"
+                )
+            else:
+                body = (
+                    f"¿En qué puedo ayudarte? 👇\n\n"
+                    f"1️⃣ Sacar turno\n"
+                    f"2️⃣ Ver servicios\n"
+                    f"3️⃣ Consultar precios\n"
+                    f"4️⃣ Cómo llegar\n"
+                    f"5️⃣ Mis turnos\n"
+                    f"6️⃣ Cancelar turno\n"
+                    f"7️⃣ Hablar con humano\n\n"
+                    f"Respondé con el número (1, 2, 3...)"
+                )
             store.mark_inbound_done(inbound["provider_message_id"])
             return f"[MENU] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
 
-        # =====================================================================
-        # 3. FLUJO DE TURNOS
-        # =====================================================================
-        # Verificar si estamos en medio de un flujo de turno
-        turno_response = self._check_turno_flow(
-            inbound["id"], to_number, text, inbound["provider"], inbound["from_number"]
-        )
-        if turno_response:
-            store.mark_inbound_done(inbound["provider_message_id"])
-            return f"[TURNO FLOW] {turno_response}"
-        
-        # =====================================================================
-        # 4. CANCELAR TURNOS
-        # =====================================================================
-        if _is_about_cancel(text) or _is_about_reschedule(text):
-            return f"[CANCEL] {self._handle_cancel_turno(inbound['id'], to_number, text, inbound['provider'], from_number)}"
-        
-        # =====================================================================
-        # 5. LISTAR TURNOS
-        # =====================================================================
-        if _is_about_list_turns(text):
-            return f"[LIST] {self._handle_list_turnos(inbound['id'], to_number, inbound['provider'], from_number)}"
+        if TURNOS_ENABLED:
+            # =====================================================================
+            # 3. FLUJO DE TURNOS
+            # =====================================================================
+            # Verificar si estamos en medio de un flujo de turno
+            turno_response = self._check_turno_flow(
+                inbound["id"], to_number, text, inbound["provider"], inbound["from_number"]
+            )
+            if turno_response:
+                store.mark_inbound_done(inbound["provider_message_id"])
+                return f"[TURNO FLOW] {turno_response}"
+
+            # =====================================================================
+            # 4. CANCELAR TURNOS
+            # =====================================================================
+            if _is_about_cancel(text) or _is_about_reschedule(text):
+                return f"[CANCEL] {self._handle_cancel_turno(inbound['id'], to_number, text, inbound['provider'], from_number)}"
+
+            # =====================================================================
+            # 5. LISTAR TURNOS
+            # =====================================================================
+            if _is_about_list_turns(text):
+                return f"[LIST] {self._handle_list_turnos(inbound['id'], to_number, inbound['provider'], from_number)}"
 
         # =====================================================================
-        # 6. SALUDO EXPLÍCITO
+        # 6. INTENCIÓN COMERCIAL (demo / anuncio / venta)
+        # =====================================================================
+        if (SALES_CONTACT_PHONE or SALES_DEMO_LINK) and _is_about_demo_or_sales(text):
+            body = _build_demo_response()
+            if SALES_AUTO_HANDOFF and not store.is_claimed(from_number):
+                store.claim_conversation(
+                    from_number,
+                    claimed_by="bot_auto_sales",
+                    notes="Lead detectado: solicitud de demo/anuncio/venta",
+                )
+                body += "\n\nUn asesor humano ya tomó tu conversación y te responderá pronto."
+            store.mark_inbound_done(inbound["provider_message_id"])
+            return f"[DEMO/SALES] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
+
+        # =====================================================================
+        # 7. SALUDO EXPLÍCITO
         # =====================================================================
         if _is_greeting(text):
             msg_id = self._send_greeting_with_menu(inbound["id"], to_number, inbound["provider"])
@@ -1254,15 +1341,19 @@ class WhatsAppService:
             return f"[GREETING+MENU] {msg_id}"
 
         # =====================================================================
-        # 7. INTENCIONES GENÉRICAS
+        # 8. INTENCIONES GENÉRICAS
         # =====================================================================
         if _is_about_services(text):
+            if not TURNOS_ENABLED:
+                query = "¿Qué servicios y funcionalidades incluye?"
+                store.mark_inbound_done(inbound["provider_message_id"])
+                return f"[RAG servicios] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
             body = _format_services_menu()
             store.mark_inbound_done(inbound["provider_message_id"])
             return f"[SERVICES] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
 
         if _is_about_precios(text):
-            query = "¿Cuánto cuestan los tratamientos y servicios?"
+            query = _precios_query()
             store.mark_inbound_done(inbound["provider_message_id"])
             return f"[RAG precios] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
 
