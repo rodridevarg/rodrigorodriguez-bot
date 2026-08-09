@@ -55,6 +55,90 @@ def _is_greeting(text: str) -> bool:
     return any(clean.startswith(g) for g in greetings) or clean in ["hola", "buenas"]
 
 
+def _is_specific_question(text: str) -> bool:
+    """Detecta si el mensaje es una pregunta especifica o de continuacion que no debe responderse con el mensaje fijo de presentacion."""
+    specific_keywords = [
+        # Ubicacion
+        "donde", "dónde", "direccion", "dirección", "ubicacion", "ubicación", "calle", "dire",
+        # Precios
+        "precio", "precios", "cuanto", "cuánto", "costo", "valor", "descuento", "promocion", "promoción", "oferta",
+        # Turnos
+        "turno", "turnos", "cita", "agendar", "reservar", "disponibilidad", "horario", "hora",
+        # Servicios especificos
+        "servicio", "servicios", "tratamiento", "tratamientos", "masaje", "facial", "depilacion", "depilación",
+        # Contacto
+        "whatsapp", "telefono", "teléfono", "mail", "email", "contacto", "hablar", "llamar",
+        # Demo/reunion especifica
+        "demo", "reunion", "reunión", "agendar demo", "coordinar", "coordinemos", "coordinamos",
+        # Palabras de continuacion / respuesta corta
+        "si", "sí", "dale", "ok", "okey", "bueno", "perfecto", "genial", "va", "vamos", "listo", "confirmo",
+        "me interesa", "quisiera", "quiero", "necesito", "podemos", "puede", "pueden",
+    ]
+    return any(k in text for k in specific_keywords)
+
+
+def _was_company_info_sent(recent_history: Optional[List[Dict]]) -> bool:
+    """Verifica si ya se envio el mensaje fijo de presentacion en el historial reciente."""
+    if not recent_history:
+        return False
+    marker = "MiCita es una secretaria virtual por WhatsApp para negocios"
+    for msg in recent_history:
+        if msg.get("direction") == "outbound" and marker in msg.get("content", ""):
+            return True
+    return False
+
+
+def _is_initial_contact(text: str, recent_history: Optional[List[Dict]] = None) -> bool:
+    """
+    Detecta si el mensaje es un primer contacto o solicitud general de informacion.
+    No activa para preguntas especificas (ubicacion, precios, turnos, etc.)
+    ni si ya se envio la presentacion recientemente.
+    """
+    clean = text.lower().strip()
+
+    # Si ya mandamos el mensaje de presentacion, no repetir
+    if _was_company_info_sent(recent_history):
+        return False
+
+    # Saludos y variaciones con errores
+    greetings = [
+        "hola", "hols", "holaa", "holaaa", "holis", "ola", "olaa", "oli",
+        "buenas", "buen dia", "buen día", "buenos dias", "buenos días",
+        "buenas tardes", "buenas noches", "hey", "hi", "hello", "que tal", "qué tal",
+        "buen", "wenas", "wenas", "holaa", "holis",
+    ]
+    if any(clean.startswith(g) for g in greetings) or clean in greetings:
+        if _is_specific_question(clean):
+            return False
+        return True
+
+    # Solicitudes de informacion general
+    info_phrases = [
+        "informacion", "información", "info", "mas info", "más info",
+        "mas informacion", "más información", "informacion de tu empresa",
+        "información de tu empresa", "info de tu empresa",
+        "quiero saber", "quisiera saber", "quisiera informacion",
+        "quisiera información", "contame", "contame mas", "contame más",
+        "que es", "qué es", "que hacen", "qué hacen", "como funciona", "cómo funciona",
+        "me interesa", "me gustaria saber", "me gustaría saber",
+        "me pasas info", "pasame info", "pasame informacion", "pasame información",
+        "obtener informacion", "obtener información", "conocer mas", "conocer más",
+    ]
+    if any(p in clean for p in info_phrases):
+        if _is_specific_question(clean):
+            return False
+        return True
+
+    # Mensajes muy cortos (1 palabra) que sean saludos o afirmaciones solas, sin palabras especificas
+    words = clean.split()
+    if len(words) == 1 and not _is_specific_question(clean):
+        short_greetings = ["hola", "hols", "holaa", "buenas", "hey", "oli", "ola", "buen"]
+        if words[0] in short_greetings:
+            return True
+
+    return False
+
+
 def _is_about_turno(text: str) -> bool:
     keywords = [
         "turno", "turnos", "cita", "agendar", "sacar", "reservar", "disponibilidad", 
@@ -618,6 +702,17 @@ class WhatsAppService:
             f"6️⃣ Cancelar turno\n"
             f"7️⃣ Hablar con humano\n\n"
             f"Respondé con el número (1, 2, 3...)"
+        )
+        return self._send_outbound(inbound_id, to_number, body, provider)
+
+    def _send_company_info(self, inbound_id: int, to_number: str, provider: str) -> str:
+        """Envia mensaje fijo de presentacion para primer contacto o solicitud general de informacion."""
+        body = (
+            "¡Hola! 😊 MiCita es una secretaria virtual por WhatsApp para negocios. "
+            "Respondemos consultas, mostramos catálogo de productos y servicios con precios, "
+            "ayudamos a cerrar ventas y también agendamos turnos automáticamente. "
+            "Todo se configura con tu información y tu tono.\n\n"
+            "¿De qué tipo de negocio se trata? Así te cuento cómo te sirve."
         )
         return self._send_outbound(inbound_id, to_number, body, provider)
 
@@ -1333,7 +1428,16 @@ class WhatsAppService:
             return f"[DEMO/SALES] {self._send_outbound(inbound['id'], to_number, body, inbound['provider'])}"
 
         # =====================================================================
-        # 7. SALUDO EXPLÍCITO
+        # 7. PRIMER CONTACTO / INFORMACIÓN GENERAL
+        # =====================================================================
+        recent_history = store.get_full_conversation(from_number, limit=6)
+        if _is_initial_contact(text, recent_history):
+            msg_id = self._send_company_info(inbound["id"], to_number, inbound["provider"])
+            store.mark_inbound_done(inbound["provider_message_id"])
+            return f"[COMPANY_INFO] {msg_id}"
+
+        # =====================================================================
+        # 8. SALUDO EXPLÍCITO
         # =====================================================================
         if _is_greeting(text):
             msg_id = self._send_greeting_with_menu(inbound["id"], to_number, inbound["provider"])
@@ -1341,7 +1445,7 @@ class WhatsAppService:
             return f"[GREETING+MENU] {msg_id}"
 
         # =====================================================================
-        # 8. INTENCIONES GENÉRICAS
+        # 9. INTENCIONES GENÉRICAS
         # =====================================================================
         if _is_about_services(text):
             if not TURNOS_ENABLED:
@@ -1363,7 +1467,7 @@ class WhatsAppService:
             return f"[RAG ubicacion] {self._send_rag_answer(inbound['id'], to_number, query, inbound['provider'], from_number)}"
 
         # =====================================================================
-        # 8. RAG NORMAL
+        # 10. RAG NORMAL
         # =====================================================================
         msg_id = self._send_rag_answer(
             inbound["id"], to_number, text, inbound["provider"], inbound["from_number"]
