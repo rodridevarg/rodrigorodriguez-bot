@@ -578,22 +578,31 @@ def _precios_query() -> str:
     return "¿Cuánto cuestan los tratamientos y servicios?"
 
 
-def _build_demo_response() -> str:
-    """Construye mensaje de oferta de demo/reunión comercial."""
+def _build_demo_response(recent_history: Optional[List[Dict]] = None) -> str:
+    """Construye mensaje de oferta de reunion comercial por Google Meet."""
+
+    # Verificar si ya se envio la presentacion y el usuario respondio con informacion del negocio
+    business_already_mentioned = False
+    company_info_marker = "MiCita es una secretaria virtual por WhatsApp para negocios"
+    if recent_history:
+        company_info_sent = False
+        for msg in recent_history:
+            if msg.get("direction") == "outbound" and company_info_marker in msg.get("content", ""):
+                company_info_sent = True
+            elif company_info_sent and msg.get("direction") == "inbound":
+                business_already_mentioned = True
+                break
+
     lines = [
-        f"¡Hola! Me encanta que te interese {BUSINESS_NAME}. 😊",
+        "¡Perfecto! 😊 Coordinamos una breve reunión por Google Meet, sin compromiso.",
         "",
-        "Para coordinar una demo o reunión sin compromiso, escribinos directamente:",
-        "",
+        "Rodrigo te va a contactar por este mismo WhatsApp para confirmar día y horario.",
     ]
-    if SALES_DEMO_LINK:
-        lines.append(f"👉 {SALES_DEMO_LINK}")
-    elif SALES_CONTACT_PHONE:
-        lines.append(f"👉 WhatsApp: {SALES_CONTACT_PHONE}")
-    if CONTACT_EMAIL:
-        lines.append(f"📧 Email: {CONTACT_EMAIL}")
-    lines.append("")
-    lines.append("¿De qué tipo de negocio se trata? Así te pasamos info más específica.")
+
+    if not business_already_mentioned:
+        lines.append("")
+        lines.append("¿De qué tipo de negocio se trata? Así te pasamos info más específica.")
+
     return "\n".join(lines)
 
 
@@ -1277,6 +1286,9 @@ class WhatsAppService:
         text = inbound["text"]
         from_number = inbound["from_number"]
 
+        # Historial reciente para decisiones contextuales
+        recent_history = store.get_full_conversation(from_number, limit=6)
+
         # Human handoff check
         if store.is_claimed(inbound["from_number"]):
             if store.should_send_transition(inbound["from_number"]):
@@ -1416,7 +1428,7 @@ class WhatsAppService:
         # 6. INTENCIÓN COMERCIAL (demo / anuncio / venta)
         # =====================================================================
         if (SALES_CONTACT_PHONE or SALES_DEMO_LINK) and _is_about_demo_or_sales(text):
-            body = _build_demo_response()
+            body = _build_demo_response(recent_history)
             if SALES_AUTO_HANDOFF and not store.is_claimed(from_number):
                 store.claim_conversation(
                     from_number,
@@ -1430,7 +1442,6 @@ class WhatsAppService:
         # =====================================================================
         # 7. PRIMER CONTACTO / INFORMACIÓN GENERAL
         # =====================================================================
-        recent_history = store.get_full_conversation(from_number, limit=6)
         if _is_initial_contact(text, recent_history):
             msg_id = self._send_company_info(inbound["id"], to_number, inbound["provider"])
             store.mark_inbound_done(inbound["provider_message_id"])
