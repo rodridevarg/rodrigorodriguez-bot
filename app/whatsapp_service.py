@@ -195,14 +195,13 @@ def _is_about_ubicacion(text: str) -> bool:
 
 
 def _is_about_demo_or_sales(text: str) -> bool:
-    """Detecta intención de demo, venta, anuncio o interés comercial."""
+    """Detecta intención explícita de demo, reunión comercial o contacto con ventas."""
     keywords = [
         "demo", "demostración", "demostracion", "quiero una demo", "ver una demo",
-        "me interesa", "para mi negocio", "quiero contratar", "quiero implementar",
-        "reunión", "reunion", "charlemos", "hablar con alguien", "hablar con rodrigo",
-        "vender mi servicio", "quiero el bot", "quiero micita", "me gustaría recibir",
-        "me gustaria recibir", "vi el anuncio", "vi la publicidad", "vi el flyer",
-        "publicidad", "anuncio", "flyer", "promocion", "promoción",
+        "para mi negocio", "quiero contratar", "quiero implementar",
+        "reunión", "reunion", "charlemos", "coordinemos", "coordinamos",
+        "hablar con alguien", "hablar con rodrigo",
+        "vender mi servicio", "quiero el bot", "quiero micita",
         "hablar con una persona", "persona real", "asesor", "humano",
     ]
     clean = text.lower()
