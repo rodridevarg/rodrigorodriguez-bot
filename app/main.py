@@ -25,6 +25,7 @@ from app.whatsapp_service import whatsapp_service
 from app.whatsapp_store import store
 from app.webhook_signature import validate_meta_signature, META_SIGNATURE_HEADER
 from app.rag_service import answer_question
+from app import capi_client
 
 app = FastAPI(title=BOT_NAME)
 
@@ -284,6 +285,57 @@ def ask_public_endpoint(request: Request, body: AskRequest):
         answer=result["answer"],
         sources=[Source(**s) for s in result["sources"]],
     )
+
+
+# ============================================================
+# Conversion API (CAPI) proxy for landing page events
+# ============================================================
+class ConversionEventRequest(BaseModel):
+    event_name: str
+    event_id: str
+    event_source_url: str
+    fbp: str | None = None
+    fbc: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    value: float | None = None
+    currency: str | None = None
+
+
+@app.post("/api/conversion")
+def conversion_event_endpoint(request: Request, body: ConversionEventRequest):
+    """Receive conversion events from micita.com.ar landing and forward them to Meta CAPI."""
+    client_ip = _get_client_ip(request)
+    client_user_agent = request.headers.get("User-Agent", "")
+
+    # Light rate limit per IP to prevent abuse
+    limiter = _get_public_rate_limiter()
+    allowed, retry_after = limiter.is_allowed(client_ip)
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    result = capi_client.send_conversion_event(
+        event_name=body.event_name,
+        event_id=body.event_id,
+        event_source_url=body.event_source_url,
+        client_user_agent=client_user_agent,
+        client_ip_address=client_ip,
+        fbp=body.fbp,
+        fbc=body.fbc,
+        email=body.email,
+        phone=body.phone,
+        value=body.value,
+        currency=body.currency,
+    )
+
+    if result.get("error"):
+        raise HTTPException(status_code=502, detail=result["error"])
+
+    return {"status": "ok", "capi_response": result}
 
 
 # ============================================================

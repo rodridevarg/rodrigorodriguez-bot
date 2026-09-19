@@ -50,6 +50,10 @@ META_GRAPH_VERSION = os.getenv("META_GRAPH_VERSION", "v23.0")
 META_VALIDATE_SIGNATURE = os.getenv("META_VALIDATE_SIGNATURE", "false").lower() == "true"
 PUBLIC_WEBHOOK_URL = os.getenv("PUBLIC_WEBHOOK_URL")
 
+# API de Conversiones de Meta (CAPI) para landing/micita.com.ar
+META_CONVERSION_API_TOKEN = os.getenv("META_CONVERSION_API_TOKEN")
+META_CONVERSION_PIXEL_ID = os.getenv("META_CONVERSION_PIXEL_ID", "1242056251208109")
+
 WEBHOOK_MODE = os.getenv("WEBHOOK_MODE", "inline")
 
 ASK_API_KEY = os.getenv("ASK_API_KEY")
