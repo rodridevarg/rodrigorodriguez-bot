@@ -39,6 +39,7 @@ def send_conversion_event(
     phone: Optional[str] = None,
     value: Optional[float] = None,
     currency: Optional[str] = None,
+    test_event_code: Optional[str] = None,
 ) -> dict:
     """Envía un evento a la API de Conversiones de Meta.
 
@@ -54,6 +55,7 @@ def send_conversion_event(
         phone: Teléfono del usuario (se hashea antes de enviar).
         value: Valor monetario opcional.
         currency: Moneda opcional (ISO 4217).
+        test_event_code: Código de prueba de Meta Events Manager (Test Events).
 
     Returns:
         Dict con la respuesta de Meta o un dict de error.
@@ -101,6 +103,8 @@ def send_conversion_event(
         "data": [event],
         "access_token": META_CONVERSION_API_TOKEN,
     }
+    if test_event_code:
+        payload["test_event_code"] = test_event_code
 
     try:
         response = requests.post(

@@ -300,6 +300,7 @@ class ConversionEventRequest(BaseModel):
     phone: str | None = None
     value: float | None = None
     currency: str | None = None
+    test_event_code: str | None = None
 
 
 @app.post("/api/conversion")
@@ -330,6 +331,7 @@ def conversion_event_endpoint(request: Request, body: ConversionEventRequest):
         phone=body.phone,
         value=body.value,
         currency=body.currency,
+        test_event_code=body.test_event_code,
     )
 
     if result.get("error"):
